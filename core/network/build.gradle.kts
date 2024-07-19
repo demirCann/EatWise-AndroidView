@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -13,6 +15,7 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+
     }
 
     buildTypes {
@@ -35,6 +38,8 @@ android {
 
 dependencies {
 
+    implementation(project(":core:model"))
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -50,5 +55,15 @@ dependencies {
     // KotlinX Serialization
     implementation(libs.kotlinx.serialization.json)
 
+    // Dagger - Hilt
+    implementation(libs.hilt.android)
+    implementation(libs.hilt.ext.work)
+    ksp(libs.hilt.compiler)
+    ksp(libs.hilt.ext.compiler)
+    implementation(libs.androidx.work.ktx)
+
+    // Chucker
+    debugImplementation (libs.chucker.library)
+    releaseImplementation (libs.chucker.library.no.op)
 
 }
