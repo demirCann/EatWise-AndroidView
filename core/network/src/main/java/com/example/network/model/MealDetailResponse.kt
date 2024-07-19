@@ -1,6 +1,5 @@
 package com.example.network.model
 
-import com.example.model.MealDetail
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
