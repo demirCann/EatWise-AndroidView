@@ -5,6 +5,16 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/chat_nav_graph">
 
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="com.example.eatwiseandroidview.SplashFragment"
+        android:label="fragment_splash"
+        tools:layout="@layout/fragment_splash" >
+        <action
+            android:id="@+id/action_splashFragment_to_homeFragment"
+            app:destination="@id/meals_nav_graph" />
+    </fragment>
+
     <include app:graph="@navigation/meals_nav" />
     <include app:graph="@navigation/favorites_nav" />
     <include app:graph="@navigation/chat_nav" />

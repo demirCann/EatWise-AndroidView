@@ -69,4 +69,7 @@ dependencies {
     ksp(libs.hilt.compiler)
     ksp(libs.hilt.ext.compiler)
     implementation(libs.androidx.work.ktx)
+
+    // Lottie
+    implementation(libs.lottie)
 }

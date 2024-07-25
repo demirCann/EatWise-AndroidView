@@ -30,6 +30,7 @@ jsoup = "1.14.3"
 mockk = "1.12.0"
 androidx-core = "2.1.0"
 coroutines = "1.6.0"
+lottie = "6.4.0"
 
 
 [libraries]
@@ -67,6 +68,7 @@ jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
 androidx-core-testing = { group = "androidx.arch.core", name = "core-testing", version.ref = "androidx-core" }
+lottie = { group = "com.airbnb.android", name = "lottie", version.ref = "lottie" }
 
 
 
