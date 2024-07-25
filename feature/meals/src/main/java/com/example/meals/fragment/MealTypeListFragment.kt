@@ -11,8 +11,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.GridLayoutManager
 import com.example.feature.MealsTypeAdapter
+import com.example.feature.utils.AppBarUtil
+import com.example.feature.utils.LayoutUtil
 import com.example.feature.utils.NavigationUtil
 import com.example.meals.R
 import com.example.meals.databinding.FragmentMealTypeListBinding
@@ -50,11 +51,13 @@ class MealTypeListFragment : Fragment() {
             MealTypeListFragmentDirections.actionMealTypeListFragmentToSearchFragment()
         )
 
-        binding.topAppBar.title = mealType.replaceFirst(mealType[0], mealType[0].uppercaseChar())
+        LayoutUtil.setLayoutManager(
+            this.context,
+            binding.recyclerView,
+            resources.configuration.orientation
+        )
 
-        binding.topAppBar.setNavigationOnClickListener {
-            findNavController().navigateUp()
-        }
+        AppBarUtil.setTopAppBar(this, binding.topAppBar, mealType)
 
         val mealsAdapter = MealsTypeAdapter(
             isWide = true,
@@ -65,14 +68,14 @@ class MealTypeListFragment : Fragment() {
 
             },
             onFavoriteClicked = { meal ->
-                viewModel.addFavorite(meal)
+                if (meal.isFavorite) {
+                    viewModel.addFavorite(meal)
+                } else {
+                    viewModel.removeFavorite(meal.id)
+                }
             }
         )
-
-        binding.recyclerView.apply {
-            layoutManager = GridLayoutManager(context, 2)
-            adapter = mealsAdapter
-        }
+        binding.recyclerView.adapter = mealsAdapter
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -99,7 +102,6 @@ class MealTypeListFragment : Fragment() {
                 }
             }
         }
-
     }
 
     override fun onDestroyView() {

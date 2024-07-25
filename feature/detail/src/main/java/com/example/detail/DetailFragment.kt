@@ -12,11 +12,11 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import coil.load
 import com.example.detail.databinding.FragmentDetailBinding
 import com.example.feature.DetailFragmentArguments
+import com.example.feature.utils.AppBarUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -46,7 +46,7 @@ class DetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupTopBar()
+        AppBarUtil.setTopAppBar(this, binding.toolbar, binding.toolbar.title.toString())
         setupIngredientsCard()
         setupInstructionsCard()
 
@@ -110,12 +110,6 @@ class DetailFragment : Fragment() {
                 setPadding(8, 8, 8, 8)
             }
             binding.instructionsList.addView(textView)
-        }
-    }
-
-    private fun setupTopBar() {
-        binding.toolbar.setNavigationOnClickListener {
-            findNavController().navigateUp()
         }
     }
 

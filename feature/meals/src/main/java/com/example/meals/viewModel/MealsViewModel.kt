@@ -7,7 +7,9 @@ import com.example.meals.R
 import com.example.meals.model.CarouselItemData
 import com.example.meals.model.MealType
 import com.example.model.FavoriteMeal
+import com.example.model.Info
 import com.example.model.Meal
+import com.example.model.toFavoriteMeal
 import com.example.util.ApiResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -61,9 +63,15 @@ class MealsViewModel @Inject constructor(
 
 
 
-    fun addFavorite(favorite: FavoriteMeal) {
+    fun addFavorite(meal: Info) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.addToFavorites(favorite)
+            repository.addToFavorites(meal.toFavoriteMeal())
+        }
+    }
+
+    fun removeFavorite(id: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.removeMealFromFavorites(id)
         }
     }
 

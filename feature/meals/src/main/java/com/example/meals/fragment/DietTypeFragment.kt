@@ -11,10 +11,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.GridLayoutManager
+import com.example.feature.MealsTypeAdapter
+import com.example.feature.utils.AppBarUtil
+import com.example.feature.utils.LayoutUtil
 import com.example.feature.utils.NavigationUtil
 import com.example.meals.R
-import com.example.feature.MealsTypeAdapter
 import com.example.meals.databinding.FragmentDietTypeBinding
 import com.example.meals.viewModel.DietTypeViewModel
 import com.example.meals.viewModel.MealState
@@ -30,6 +31,8 @@ class DietTypeFragment : Fragment() {
     private val viewModel: DietTypeViewModel by viewModels()
     private val args: DietTypeFragmentArgs by navArgs()
 
+    private lateinit var mealsAdapter: MealsTypeAdapter
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,7 +47,9 @@ class DietTypeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val dietType = args.dietType
+
         viewModel.fetchMealsForDiet(dietType)
+
         NavigationUtil.setupSearchButton(
             this,
             binding.topAppBar,
@@ -52,12 +57,15 @@ class DietTypeFragment : Fragment() {
             DietTypeFragmentDirections.actionDietTypeFragmentToSearchFragment()
         )
 
-        binding.topAppBar.title = dietType.replaceFirst(dietType[0], dietType[0].uppercaseChar())
-        binding.topAppBar.setNavigationOnClickListener {
-            findNavController().navigateUp()
-        }
+        LayoutUtil.setLayoutManager(
+            this.context,
+            binding.recyclerView,
+            resources.configuration.orientation
+        )
 
-        val mealsAdapter = MealsTypeAdapter(
+        AppBarUtil.setTopAppBar(this, binding.topAppBar, dietType)
+
+        mealsAdapter = MealsTypeAdapter(
             isWide = true,
             onClickedItem = { mealId ->
                 // Navigate to meal detail
@@ -66,14 +74,19 @@ class DietTypeFragment : Fragment() {
                 findNavController().navigate(action)
             },
             onFavoriteClicked = { meal ->
-                viewModel.addFavorite(meal)
+                if (meal.isFavorite) {
+                    viewModel.addFavorite(meal)
+                } else {
+                    viewModel.removeFavorite(meal.id)
+                }
             }
         )
-        binding.recyclerView.apply {
-            adapter = mealsAdapter
-            layoutManager = GridLayoutManager(requireContext(), 2)
-        }
+        binding.recyclerView.adapter = mealsAdapter
 
+        fetchMealsForDiet(dietType)
+    }
+
+    private fun fetchMealsForDiet(dietType: String) {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.fetchMealsForDiet(dietType)
@@ -97,7 +110,6 @@ class DietTypeFragment : Fragment() {
                 }
             }
         }
-
     }
 
     override fun onDestroyView() {

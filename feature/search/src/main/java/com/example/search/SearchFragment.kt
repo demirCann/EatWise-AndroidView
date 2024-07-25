@@ -11,8 +11,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.GridLayoutManager
 import com.example.feature.MealsTypeAdapter
+import com.example.feature.utils.LayoutUtil
 import com.example.search.databinding.FragmentSearchBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -50,6 +50,12 @@ class SearchFragment : Fragment() {
             findNavController().navigateUp()
         }
 
+        LayoutUtil.setLayoutManager(
+            this.context,
+            binding.recyclerView,
+            resources.configuration.orientation
+        )
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.searchedMeals.collect {
                 Log.d("SearchFragment", "onViewCreated: $it")
@@ -62,8 +68,6 @@ class SearchFragment : Fragment() {
                 handleFavoriteSearchState(it)
             }
         }
-
-
     }
 
     private fun setupRecyclerView() {
@@ -74,13 +78,14 @@ class SearchFragment : Fragment() {
                 findNavController().navigate(action)
             },
             onFavoriteClicked = { meal ->
-                viewModel.addFavorite(meal)
+                if (meal.isFavorite) {
+                    viewModel.addFavorite(meal)
+                } else {
+                    viewModel.removeFavorite(meal.id)
+                }
             }
         )
-        binding.recyclerView.apply {
-            layoutManager = GridLayoutManager(requireContext(), 2)
-            adapter = searchAdapter
-        }
+        binding.recyclerView.adapter = searchAdapter
     }
 
     private fun setupSearchToolBar() {
@@ -109,7 +114,7 @@ class SearchFragment : Fragment() {
             }
         })
         binding.searchView.setOnCloseListener {
-            if(binding.searchView.query.isEmpty()) {
+            if (binding.searchView.query.isEmpty()) {
                 findNavController().navigateUp()
             } else {
                 binding.searchView.setQuery("", false)

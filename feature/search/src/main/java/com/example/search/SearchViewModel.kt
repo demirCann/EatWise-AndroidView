@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.data.repository.MealRepository
 import com.example.model.FavoriteMeal
 import com.example.model.Info
-import com.example.model.Meal
 import com.example.model.toFavoriteMeal
 import com.example.util.ApiResult
 import com.example.util.DaoResult

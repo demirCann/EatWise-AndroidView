@@ -10,9 +10,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
 import com.example.favorites.databinding.FragmentFavoritesBinding
 import com.example.feature.MealsTypeAdapter
+import com.example.feature.utils.LayoutUtil
 import com.example.feature.utils.NavigationUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -25,6 +25,8 @@ class FavoritesFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: FavoriteViewModel by viewModels()
+
+    private lateinit var favoriteAdapter: MealsTypeAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,7 +42,13 @@ class FavoritesFragment : Fragment() {
 
         viewModel.getFavorites()
 
-        val favoriteAdapter = MealsTypeAdapter(
+        LayoutUtil.setLayoutManager(
+            this.context,
+            binding.recyclerView,
+            resources.configuration.orientation
+        )
+
+        favoriteAdapter = MealsTypeAdapter(
             isWide = true,
             onFavoriteClicked = { favorite ->
                 viewModel.removeMealFromFavorites(favorite.id)
@@ -51,6 +59,7 @@ class FavoritesFragment : Fragment() {
                 findNavController().navigate(action)
             }
         )
+        binding.recyclerView.adapter = favoriteAdapter
 
         NavigationUtil.setupSearchButton(
             this,
@@ -59,11 +68,10 @@ class FavoritesFragment : Fragment() {
             FavoritesFragmentDirections.actionFavoritesFragmentToSearchFragment(true)
         )
 
-        binding.recyclerView.apply {
-            layoutManager = GridLayoutManager(requireContext(), 2)
-            adapter = favoriteAdapter
-        }
+        getFavorites()
+    }
 
+    private fun getFavorites() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.favoritesState.collect { favoriteState ->

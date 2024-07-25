@@ -21,8 +21,7 @@ class MealTypeListViewModel @Inject constructor(
     private val _mealState = MutableStateFlow<MealState>(MealState.Loading)
     val mealState = _mealState.asStateFlow()
 
-    var type: String? = null
-        private set
+    private var type: String? = null
 
     fun setMealType(type: String) {
         this.type = type
@@ -47,4 +46,9 @@ class MealTypeListViewModel @Inject constructor(
         }
     }
 
+    fun removeFavorite(id: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.removeMealFromFavorites(id)
+        }
+    }
 }
