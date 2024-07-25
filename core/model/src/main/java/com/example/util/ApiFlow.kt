@@ -1,4 +1,4 @@
-package com.example.network.util
+package com.example.util
 
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
@@ -47,7 +47,6 @@ fun <T> apiFlow(
         emit(ApiResult.Error(e.message ?: "An error occurred"))
     }
 }.flowOn(Dispatchers.IO)
-
 
 
 sealed class ApiResult<out T> {
