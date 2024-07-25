@@ -61,11 +61,12 @@
             android:id="@+id/messageInputLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="0.8"
             app:boxBackgroundMode="none"
             app:hintEnabled="false"
             android:paddingEnd="8dp"
-            android:paddingBottom="8dp">
+            android:paddingBottom="8dp"
+            android:maxWidth="250dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/messageInput"
