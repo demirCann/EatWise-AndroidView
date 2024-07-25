@@ -6,3 +6,12 @@ data class Info(
     val imageType: String,
     val title: String
 )
+
+fun Info.toFavoriteMeal(): FavoriteMeal {
+    return FavoriteMeal(
+        id = id,
+        image = image,
+        imageType = imageType,
+        title = title
+    )
+}
