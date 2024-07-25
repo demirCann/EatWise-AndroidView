@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/detailFragment"
+    android:id="@+id/detail_nav">
+
+    <fragment
+        android:id="@+id/detailFragment"
+        android:name="com.example.detail.DetailFragment"
+        android:label="fragment_detail"
+        tools:layout="@layout/fragment_detail">
+        <argument
+            android:name="mealId"
+            app:argType="integer" />
+    </fragment>
+
+</navigation>
