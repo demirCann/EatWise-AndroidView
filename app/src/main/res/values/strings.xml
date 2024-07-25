@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">EatWiseAndroidView</string>
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="chat">Chat</string>
+    <string name="favorites">Favorites</string>
+    <string name="meals">Meals</string>
 </resources>
