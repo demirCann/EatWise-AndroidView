@@ -3,7 +3,6 @@ package com.example.meals
 import com.example.data.repository.MealRepository
 import com.example.meals.viewModel.DietTypeViewModel
 import com.example.meals.viewModel.MealState
-import com.example.model.FavoriteMeal
 import com.example.network.model.MealResponse
 import com.example.network.model.toMeal
 import com.example.util.ApiResult
@@ -16,8 +15,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.ArgumentCaptor
-import org.mockito.Captor
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
@@ -36,9 +33,6 @@ class DietTypeViewModelTest {
     private lateinit var repository: MealRepository
 
     private lateinit var viewModel: DietTypeViewModel
-
-    @Captor
-    private lateinit var favoriteMealCaptor: ArgumentCaptor<FavoriteMeal>
 
     @Before
     fun setUp() {
