@@ -66,4 +66,12 @@ dependencies {
     debugImplementation (libs.chucker.library)
     releaseImplementation (libs.chucker.library.no.op)
 
+    // Testing
+    testImplementation(libs.junit)
+    testImplementation(libs.coroutines.test)
+    testImplementation(libs.mockk)
+    testImplementation(libs.androidx.core.testing)
+
+    // Retrofit
+    implementation(libs.retrofit.core)
 }
