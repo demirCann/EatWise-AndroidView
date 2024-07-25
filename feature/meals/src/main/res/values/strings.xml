@@ -1,0 +1,15 @@
+<resources>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="see_all">See all</string>
+    <string name="favorite_button">Favorite Button</string>
+    <string name="meal_image">Meal Image</string>
+    <string name="carousel_image">Carousel Image</string>
+    <string name="meal_type_title">Meal Type Title</string>
+    <string name="back_button">Back Button</string>
+    <string name="search_button">Search Button</string>
+    <string name="title">Title</string>
+    <string name="error">Error</string>
+    <string name="fragment_top_bar">Fragment top bar</string>
+    <string name="meals">Meals</string>
+</resources>

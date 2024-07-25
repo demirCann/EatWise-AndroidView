@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/meals_nav_graph"
+    app:startDestination="@id/mealsFragment">
+
+    <fragment
+        android:id="@+id/mealsFragment"
+        android:name="com.example.meals.fragment.MealsFragment"
+        android:label="fragment_meals"
+        tools:layout="@layout/fragment_meals" >
+        <action
+            android:id="@+id/action_mealsFragment_to_mealTypeListFragment"
+            app:destination="@id/mealTypeListFragment">
+            <argument
+                android:name="mealType"
+                app:argType="string" />
+        </action>
+        <action
+            android:id="@+id/action_mealsFragment_to_dietTypeFragment"
+            app:destination="@id/dietTypeFragment" >
+            <argument
+                android:name="dietType"
+                app:argType="string" />
+        </action>
+        <action
+            android:id="@+id/action_mealsFragment_to_detailFragment"
+            app:destination="@+id/detail_nav" >
+            <argument
+                android:name="mealId"
+                app:argType="integer" />
+        </action>
+        <action
+            android:id="@+id/action_mealsFragment_to_searchFragment"
+            app:destination="@id/search_nav" />
+    </fragment>
+    <fragment
+        android:id="@+id/mealTypeListFragment"
+        android:name="com.example.meals.fragment.MealTypeListFragment"
+        android:label="fragment_meal_type_list"
+        tools:layout="@layout/fragment_meal_type_list" >
+        <argument
+            android:name="mealType"
+            app:argType="string"
+            android:defaultValue="Breakfast" />
+        <action
+            android:id="@+id/action_mealTypeListFragment_to_detailFragment"
+            app:destination="@id/detail_nav">
+            <argument
+                android:name="mealId"
+                app:argType="integer" />
+        </action>
+        <action
+            android:id="@+id/action_mealTypeListFragment_to_searchFragment"
+            app:destination="@id/search_nav" />
+    </fragment>
+    <fragment
+        android:id="@+id/dietTypeFragment"
+        android:name="com.example.meals.fragment.DietTypeFragment"
+        android:label="fragment_diet_type"
+        tools:layout="@layout/fragment_diet_type" >
+        <argument
+            android:name="dietType"
+            app:argType="string"
+            android:defaultValue="Vegetarian" />
+        <action
+            android:id="@+id/action_dietTypeFragment_to_detailFragment"
+            app:destination="@id/detail_nav" >
+            <argument
+                android:name="mealId"
+                app:argType="integer" />
+        </action>
+        <action
+            android:id="@+id/action_dietTypeFragment_to_searchFragment"
+            app:destination="@id/search_nav" />
+    </fragment>
+</navigation>
