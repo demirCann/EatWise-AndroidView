@@ -6,7 +6,6 @@ import com.example.data.repository.MealRepository
 import com.example.meals.R
 import com.example.meals.model.CarouselItemData
 import com.example.meals.model.MealType
-import com.example.model.FavoriteMeal
 import com.example.model.Info
 import com.example.model.Meal
 import com.example.model.toFavoriteMeal
@@ -60,7 +59,6 @@ class MealsViewModel @Inject constructor(
             is ApiResult.Loading -> MealState.Loading
         }
     }
-
 
 
     fun addFavorite(meal: Info) {
