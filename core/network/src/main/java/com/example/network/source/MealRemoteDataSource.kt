@@ -2,7 +2,7 @@ package com.example.network.source
 
 import com.example.network.model.MealDetailResponse
 import com.example.network.model.MealResponse
-import com.example.network.util.ApiResult
+import com.example.util.ApiResult
 import kotlinx.coroutines.flow.Flow
 
 interface MealRemoteDataSource {
