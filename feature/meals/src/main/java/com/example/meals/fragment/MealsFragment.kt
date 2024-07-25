@@ -11,16 +11,16 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.meals.R
-import com.example.meals.adapter.CarouselAdapter
 import com.example.feature.MealsTypeAdapter
 import com.example.feature.utils.NavigationUtil
+import com.example.meals.R
+import com.example.meals.adapter.CarouselAdapter
 import com.example.meals.databinding.FragmentMealsBinding
 import com.example.meals.databinding.MealSectionLayoutBinding
 import com.example.meals.model.MealType
 import com.example.meals.viewModel.MealState
 import com.example.meals.viewModel.MealsViewModel
-import com.example.model.toFavoriteMeal
+import com.google.android.material.carousel.CarouselLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -81,14 +81,15 @@ class MealsFragment : Fragment() {
         }
 
         binding.carousel.carouselRecyclerView.apply {
-            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            layoutManager = CarouselLayoutManager()
             adapter = carouselAdapter
         }
     }
 
     private fun setupRecyclerView(sectionBinding: MealSectionLayoutBinding, mealType: MealType) {
 
-        sectionBinding.mealTypeTitle.text = mealType.type.replaceFirst(mealType.type[0], mealType.type[0].uppercaseChar())
+        sectionBinding.mealTypeTitle.text =
+            mealType.type.replaceFirst(mealType.type[0], mealType.type[0].uppercaseChar())
 
         val adapter = MealsTypeAdapter(
             isWide = false,
@@ -99,7 +100,11 @@ class MealsFragment : Fragment() {
             },
             onFavoriteClicked = { meal ->
                 // Handle click to add to favorites
-                viewModel.addFavorite(meal.toFavoriteMeal())
+                if (meal.isFavorite) {
+                    viewModel.addFavorite(meal)
+                } else {
+                    viewModel.removeFavorite(meal.id)
+                }
             }
         )
 
@@ -114,9 +119,11 @@ class MealsFragment : Fragment() {
                         is MealState.Loading -> {
                             // Show loading
                         }
+
                         is MealState.Success -> {
                             adapter.submitList(state.meals.results)
                         }
+
                         is MealState.Error -> {
                             // Error handling
                         }
