@@ -2,7 +2,7 @@ package com.example.database.source
 
 import com.example.database.dao.FavoriteDao
 import com.example.database.model.FavoriteMealEntity
-import com.example.database.util.DaoResult
+import com.example.util.DaoResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
@@ -31,4 +31,17 @@ class FavoriteLocalDataSourceImpl @Inject constructor(
     override suspend fun removeMealFromFavorites(id: Int) {
         favoriteDao.removeMealFromFavorites(id)
     }
+
+    override fun searchFavoritesByName(searchQuery: String): Flow<DaoResult<List<FavoriteMealEntity>>> =
+        flow {
+            emit(DaoResult.Loading)
+
+            val searchedFavorites = favoriteDao.searchFavoritesByName(searchQuery).firstOrNull()
+            if (searchedFavorites != null) {
+                emit(DaoResult.Success(searchedFavorites))
+            } else {
+                emit(DaoResult.Error("Error"))
+            }
+        }.flowOn(Dispatchers.IO)
+
 }

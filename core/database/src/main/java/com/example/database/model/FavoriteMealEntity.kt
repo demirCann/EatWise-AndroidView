@@ -22,3 +22,10 @@ fun FavoriteMealEntity.toFavoriteMeal() = FavoriteMeal(
 )
 
 fun List<FavoriteMealEntity>.toFavoriteMealList() = map { it.toFavoriteMeal() }
+
+fun FavoriteMeal.toEntity() = FavoriteMealEntity(
+    id = id,
+    image = image,
+    imageType = imageType,
+    title = title
+)
