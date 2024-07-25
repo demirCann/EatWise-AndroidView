@@ -20,4 +20,7 @@ interface FavoriteDao {
 
     @Query("SELECT * FROM favorites_table WHERE title LIKE '%' || :searchQuery || '%'")
     fun searchFavoritesByName(searchQuery: String): Flow<List<FavoriteMealEntity>>
+
+    @Query("SELECT EXISTS(SELECT 1 FROM favorites_table WHERE id = :mealId)")
+    suspend fun isFavorite(mealId: Int): Boolean
 }

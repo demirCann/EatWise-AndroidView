@@ -42,6 +42,7 @@ class MealsTypeAdapter(
         fun bind(meal: Info) {
             binding.apply {
                 mealTitle.text = meal.title
+                favoriteButton.isFavorite = meal.isFavorite
                 mealImage.load(meal.image) {
                     placeholder(R.drawable.placeholder)
                     error(R.drawable.error)
@@ -50,6 +51,8 @@ class MealsTypeAdapter(
                     onClickedItem(meal.id)
                 }
                 favoriteButton.setOnClickListener {
+                    meal.isFavorite = !meal.isFavorite
+                    favoriteButton.isFavorite = meal.isFavorite
                     onFavoriteClicked(meal)
                 }
 
@@ -70,7 +73,8 @@ fun FavoriteMeal.toInfo() = Info(
     id = id,
     image = image,
     imageType = imageType,
-    title = title
+    title = title,
+    isFavorite = true
 )
 
 fun Int.dpToPx(context: Context): Int = (this * context.resources.displayMetrics.density).toInt()

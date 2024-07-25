@@ -4,8 +4,11 @@ data class Info(
     val id: Int,
     val image: String,
     val imageType: String,
-    val title: String
+    val title: String,
+    var isFavorite: Boolean = false
 )
+
+
 
 fun Info.toFavoriteMeal(): FavoriteMeal {
     return FavoriteMeal(

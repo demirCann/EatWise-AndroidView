@@ -44,4 +44,8 @@ class FavoriteLocalDataSourceImpl @Inject constructor(
             }
         }.flowOn(Dispatchers.IO)
 
+    override suspend fun isFavorite(mealId: Int): Boolean {
+        return favoriteDao.isFavorite(mealId)
+    }
+
 }

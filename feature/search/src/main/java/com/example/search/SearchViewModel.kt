@@ -72,6 +72,11 @@ class SearchViewModel @Inject constructor(
         }
     }
 
+    fun removeFavorite(id: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.removeMealFromFavorites(id)
+        }
+    }
 }
 
 

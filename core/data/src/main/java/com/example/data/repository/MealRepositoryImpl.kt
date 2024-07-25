@@ -24,6 +24,9 @@ class MealRepositoryImpl @Inject constructor(
                 when (apiResult) {
                     is ApiResult.Success -> {
                         val meal = apiResult.data?.toMeal()
+                        meal?.results?.forEach { info ->
+                            info.isFavorite = favoriteLocalDataSource.isFavorite(info.id)
+                        }
                         if (meal != null) {
                             ApiResult.Success(meal)
                         } else {
@@ -81,6 +84,9 @@ class MealRepositoryImpl @Inject constructor(
                 when (apiResult) {
                     is ApiResult.Success -> {
                         val meal = apiResult.data?.toMeal()
+                        meal?.results?.forEach { info ->
+                            info.isFavorite = favoriteLocalDataSource.isFavorite(info.id)
+                        }
                         if (meal != null) {
                             ApiResult.Success(meal)
                         } else {

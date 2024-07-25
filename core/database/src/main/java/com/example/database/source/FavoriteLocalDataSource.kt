@@ -9,4 +9,5 @@ interface FavoriteLocalDataSource {
     suspend fun addToFavorites(favoriteMealEntity: FavoriteMealEntity)
     suspend fun removeMealFromFavorites(id: Int)
     fun searchFavoritesByName(searchQuery: String): Flow<DaoResult<List<FavoriteMealEntity>>>
+    suspend fun isFavorite(mealId: Int): Boolean
 }
