@@ -1,4 +1,4 @@
-package com.example.data
+package com.example.chat
 
 import org.junit.Test
 
