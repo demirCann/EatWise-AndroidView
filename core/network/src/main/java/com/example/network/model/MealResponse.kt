@@ -1,6 +1,6 @@
 package com.example.network.model
 
-import com.example.model.Meal
+import com.example.model.MealList
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -11,7 +11,7 @@ data class MealResponse(
     val totalResults: Int
 )
 
-fun MealResponse.toMeal() = Meal(
+fun MealResponse.toMealList() = MealList(
     number = number,
     offset = offset,
     results = results.map { it.toInfo() },
