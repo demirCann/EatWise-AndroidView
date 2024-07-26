@@ -3,9 +3,11 @@ package com.example.search
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.repository.MealRepository
-import com.example.model.FavoriteMeal
+import com.example.database.model.FavoriteMealEntity
 import com.example.model.Info
+import com.example.model.MealList
 import com.example.model.toFavoriteMeal
+import com.example.network.model.toMealList
 import com.example.util.ApiResult
 import com.example.util.DaoResult
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,11 +22,10 @@ class SearchViewModel @Inject constructor(
     private val repository: MealRepository
 ) : ViewModel() {
 
-    private val _favoriteSearchedMeals = MutableStateFlow<FavoriteSearchState>(FavoriteSearchState.Loading)
+    private val _favoriteSearchedMeals = MutableStateFlow(FavoriteSearchState(isLoading = true))
     val favoriteSearchedMeals = _favoriteSearchedMeals.asStateFlow()
 
-
-    private val _searchedMeals = MutableStateFlow<NetworkSearchState>(NetworkSearchState.Loading)
+    private val _searchedMeals = MutableStateFlow(NetworkSearchState(isLoading = true))
     val searchedMeals = _searchedMeals.asStateFlow()
 
     fun favoriteSearch(query: String) {
@@ -33,13 +34,23 @@ class SearchViewModel @Inject constructor(
                 when (daoResult) {
                     is DaoResult.Success -> {
                         val searchedMeals = daoResult.data!!
-                        _favoriteSearchedMeals.value = FavoriteSearchState.Success(searchedMeals)
+                        _favoriteSearchedMeals.value = FavoriteSearchState(
+                            isLoading = false,
+                            searchedMeals = searchedMeals
+                        )
                     }
+
                     is DaoResult.Error -> {
-                        _favoriteSearchedMeals.value = FavoriteSearchState.Error(daoResult.message)
+                        _favoriteSearchedMeals.value = FavoriteSearchState(
+                            isLoading = false,
+                            errorMessage = daoResult.message
+                        )
                     }
+
                     is DaoResult.Loading -> {
-                        _favoriteSearchedMeals.value = FavoriteSearchState.Loading
+                        _favoriteSearchedMeals.value = FavoriteSearchState(
+                            isLoading = true
+                        )
                     }
                 }
             }
@@ -51,14 +62,24 @@ class SearchViewModel @Inject constructor(
             repository.searchRecipes(query).collect { apiResult ->
                 when (apiResult) {
                     is ApiResult.Success -> {
-                        val searchedMeals = apiResult.data!!.results
-                        _searchedMeals.value = NetworkSearchState.Success(searchedMeals)
+                        val searchedMeals = apiResult.data!!.toMealList()
+                        _searchedMeals.value = NetworkSearchState(
+                            isLoading = false,
+                            searchedMeals = searchedMeals
+                        )
                     }
+
                     is ApiResult.Error -> {
-                        _searchedMeals.value = NetworkSearchState.Error(apiResult.message!!)
+                        _searchedMeals.value = NetworkSearchState(
+                            isLoading = false,
+                            errorMessage = apiResult.message
+                        )
                     }
+
                     is ApiResult.Loading -> {
-                        _searchedMeals.value = NetworkSearchState.Loading
+                        _searchedMeals.value = NetworkSearchState(
+                            isLoading = true
+                        )
                     }
                 }
             }
@@ -78,15 +99,14 @@ class SearchViewModel @Inject constructor(
     }
 }
 
+data class NetworkSearchState(
+    val isLoading: Boolean = false,
+    val searchedMeals: MealList? = null,
+    val errorMessage: String? = null
+)
 
-sealed class NetworkSearchState {
-    data object Loading : NetworkSearchState()
-    data class Success(val searchedMeals: List<Info>) : NetworkSearchState()
-    data class Error(val message: String) : NetworkSearchState()
-}
-
-sealed class FavoriteSearchState {
-    data object Loading : FavoriteSearchState()
-    data class Success(val searchedMeals: List<FavoriteMeal>) : FavoriteSearchState()
-    data class Error(val message: String) : FavoriteSearchState()
-}
+data class FavoriteSearchState(
+    val isLoading: Boolean = false,
+    val searchedMeals: List<FavoriteMealEntity>? = null,
+    val errorMessage: String? = null
+)

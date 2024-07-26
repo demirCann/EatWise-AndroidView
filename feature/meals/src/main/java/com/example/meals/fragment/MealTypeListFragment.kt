@@ -17,7 +17,6 @@ import com.example.feature.utils.LayoutUtil
 import com.example.feature.utils.NavigationUtil
 import com.example.meals.R
 import com.example.meals.databinding.FragmentMealTypeListBinding
-import com.example.meals.viewModel.MealState
 import com.example.meals.viewModel.MealTypeListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -80,23 +79,24 @@ class MealTypeListFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.mealState.collect { mealState ->
-                    when (mealState) {
-                        is MealState.Loading -> {
+                    when {
+                        mealState.isLoading -> {
                             binding.progressBar.visibility = View.VISIBLE
                             binding.recyclerView.visibility = View.GONE
                         }
 
-                        is MealState.Success -> {
-                            binding.progressBar.visibility = View.GONE
-                            binding.recyclerView.visibility = View.VISIBLE
-                            mealsAdapter.submitList(mealState.meals.results)
-                        }
-
-                        is MealState.Error -> {
+                        mealState.errorMessage != null -> {
                             binding.progressBar.visibility = View.GONE
                             binding.recyclerView.visibility = View.GONE
+                            binding.errorText.text = mealState.errorMessage
                             binding.errorText.visibility = View.VISIBLE
-                            binding.errorText.text = mealState.message
+                        }
+
+                        mealState.mealItems != null -> {
+                            binding.progressBar.visibility = View.GONE
+                            binding.errorText.visibility = View.GONE
+                            binding.recyclerView.visibility = View.VISIBLE
+                            mealsAdapter.submitList(mealState.mealItems.results)
                         }
                     }
                 }

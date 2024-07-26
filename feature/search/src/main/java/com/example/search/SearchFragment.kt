@@ -33,7 +33,6 @@ class SearchFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -58,7 +57,6 @@ class SearchFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.searchedMeals.collect {
-                Log.d("SearchFragment", "onViewCreated: $it")
                 handleNetworkSearchState(it)
             }
         }
@@ -127,26 +125,26 @@ class SearchFragment : Fragment() {
 
     private fun handleNetworkSearchState(state: NetworkSearchState) {
         binding.progressBar.visibility = View.GONE
-        when (state) {
-            is NetworkSearchState.Success -> {
-                if (state.searchedMeals.isEmpty()) {
+        when {
+            state.isLoading -> {
+                binding.progressBar.visibility = View.VISIBLE
+            }
+
+            state.errorMessage != null -> {
+                binding.emptyTextView.text = state.errorMessage
+                binding.emptyTextView.visibility = View.VISIBLE
+                binding.recyclerView.visibility = View.GONE
+            }
+
+            state.searchedMeals != null -> {
+                if (state.searchedMeals.results.isEmpty()) {
                     binding.emptyTextView.visibility = View.VISIBLE
                     binding.recyclerView.visibility = View.GONE
                 } else {
                     binding.emptyTextView.visibility = View.GONE
                     binding.recyclerView.visibility = View.VISIBLE
-                    searchAdapter.submitList(state.searchedMeals)
+                    searchAdapter.submitList(state.searchedMeals.results)
                 }
-            }
-
-            is NetworkSearchState.Error -> {
-                binding.emptyTextView.text = state.message
-                binding.emptyTextView.visibility = View.VISIBLE
-                binding.recyclerView.visibility = View.GONE
-            }
-
-            NetworkSearchState.Loading -> {
-                binding.progressBar.visibility = View.VISIBLE
             }
         }
     }
@@ -154,8 +152,18 @@ class SearchFragment : Fragment() {
     private fun handleFavoriteSearchState(state: FavoriteSearchState) {
         Log.d("SearchFragment", "handleFavoriteSearchState: $state")
         binding.progressBar.visibility = View.GONE
-        when (state) {
-            is FavoriteSearchState.Success -> {
+        when {
+            state.isLoading -> {
+                binding.progressBar.visibility = View.VISIBLE
+            }
+
+            state.errorMessage != null -> {
+                binding.emptyTextView.text = state.errorMessage
+                binding.emptyTextView.visibility = View.VISIBLE
+                binding.recyclerView.visibility = View.GONE
+            }
+
+            state.searchedMeals != null -> {
                 if (state.searchedMeals.isEmpty()) {
                     binding.emptyTextView.visibility = View.VISIBLE
                     binding.recyclerView.visibility = View.GONE
@@ -164,16 +172,6 @@ class SearchFragment : Fragment() {
                     binding.recyclerView.visibility = View.VISIBLE
                     searchAdapter.submitFavoriteList(state.searchedMeals)
                 }
-            }
-
-            is FavoriteSearchState.Error -> {
-                binding.emptyTextView.text = state.message
-                binding.emptyTextView.visibility = View.VISIBLE
-                binding.recyclerView.visibility = View.GONE
-            }
-
-            FavoriteSearchState.Loading -> {
-                binding.progressBar.visibility = View.GONE
             }
         }
     }
