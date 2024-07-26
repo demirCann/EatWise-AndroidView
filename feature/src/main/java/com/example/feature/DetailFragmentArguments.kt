@@ -16,14 +16,14 @@ data class DetailFragmentArguments(val mealId: Int) : NavArgs {
     companion object {
         @JvmStatic
         fun fromBundle(bundle: Bundle): DetailFragmentArguments {
-            bundle.setClassLoader(DetailFragmentArguments::class.java.classLoader)
-            val _mealId: Int
+            bundle.classLoader = DetailFragmentArguments::class.java.classLoader
+            val mealId: Int
             if (bundle.containsKey("mealId")) {
-                _mealId = bundle.getInt("mealId")
+                mealId = bundle.getInt("mealId")
             } else {
                 throw IllegalArgumentException("Required argument \"mealId\" is missing and does not have an android:defaultValue")
             }
-            return DetailFragmentArguments(_mealId)
+            return DetailFragmentArguments(mealId)
         }
     }
 }
