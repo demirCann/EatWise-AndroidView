@@ -18,7 +18,6 @@ import com.example.meals.adapter.CarouselAdapter
 import com.example.meals.databinding.FragmentMealsBinding
 import com.example.meals.databinding.MealSectionLayoutBinding
 import com.example.meals.model.MealType
-import com.example.meals.viewModel.MealState
 import com.example.meals.viewModel.MealsViewModel
 import com.google.android.material.carousel.CarouselLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
@@ -115,17 +114,18 @@ class MealsFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.mealStates[mealType]?.collect { state ->
-                    when (state) {
-                        is MealState.Loading -> {
-                            // Show loading
+                    when {
+                        state.isLoading -> {
+                            // Show loading state
                         }
 
-                        is MealState.Success -> {
-                            adapter.submitList(state.meals.results)
+                        state.mealItems != null -> {
+                            // Show meal items
+                            adapter.submitList(state.mealItems.results)
                         }
 
-                        is MealState.Error -> {
-                            // Error handling
+                        state.errorMessage != null -> {
+                            // Show error message
                         }
                     }
                 }
