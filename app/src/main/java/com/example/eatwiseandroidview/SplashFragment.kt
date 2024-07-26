@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.example.eatwiseandroidview.databinding.FragmentSplashBinding
 
@@ -29,7 +30,11 @@ class SplashFragment : Fragment() {
         view.postDelayed({
             if (binding.animationView.isAnimating) {
                 binding.animationView.cancelAnimation()
-                findNavController().navigate(R.id.action_splashFragment_to_homeFragment)
+                val navOptions = NavOptions.Builder()
+                    .setPopUpTo(R.id.splashFragment, true)
+                    .build()
+
+                findNavController().navigate(R.id.action_splashFragment_to_homeFragment, null, navOptions)
             }
         }, 2000)
 
