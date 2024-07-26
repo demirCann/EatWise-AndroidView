@@ -75,17 +75,17 @@ class FavoritesFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.favoritesState.collect { favoriteState ->
-                    when (favoriteState) {
-                        is FavoriteState.Loading -> {
+                    when {
+                        favoriteState.isLoading -> {
                             // show loading
                         }
 
-                        is FavoriteState.Success -> {
+                        favoriteState.favorites != null -> {
                             favoriteAdapter.submitFavoriteList(favoriteState.favorites)
                         }
 
-                        is FavoriteState.Error -> {
-                            //show error message
+                        favoriteState.errorMessage != null -> {
+                            // show error message
                         }
                     }
                 }
