@@ -3,12 +3,12 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingBottom="8dp">
+    android:paddingBottom="@dimen/padding_medium">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/carouselRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="196dp"
+        android:layout_height="@dimen/carousel_item_height"
         android:clipChildren="false"
         android:clipToPadding="false"
         android:orientation="horizontal" />

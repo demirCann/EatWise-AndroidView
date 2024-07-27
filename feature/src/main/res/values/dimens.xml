@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Text sizes -->
+    <dimen name="text_size_medium">16sp</dimen>
+
+    <!-- Layout sizes -->
+    <dimen name="layout_zero">0dp</dimen>
+    <dimen name="layout_small">4dp</dimen>
+    <dimen name="layout_medium">8dp</dimen>
+    <dimen name="layout_large">16dp</dimen>
+
+    <!-- Padding sizes -->
+    <dimen name="padding_zero">0dp</dimen>
+    <dimen name="padding_small">4dp</dimen>
+    <dimen name="padding_medium">8dp</dimen>
+    <dimen name="padding_large">16dp</dimen>
+    <dimen name="padding_xlarge">24dp</dimen>
+    <dimen name="padding_xxlarge">32dp</dimen>
+    <dimen name="padding_xxxlarge">56dp</dimen>
+
+    <!--Corner Radius -->
+    <dimen name="corner_radius_small">12dp</dimen>
+    <dimen name="corner_radius_medium">18dp</dimen>
+
+    <!-- Elevation -->
+    <dimen name="elevation_small">4dp</dimen>
+
+    <!-- Custom -->
+    <dimen name="carousel_item_width">150dp</dimen>
+    <dimen name="carousel_item_height">196dp</dimen>
+    <dimen name="chat_selected_image_size">100dp</dimen>
+    <dimen name="chat_user_message_max_width">250dp</dimen>
+    <dimen name="chat_image_height">200dp</dimen>
+    <dimen name="detail_image_height">300dp</dimen>
+
+</resources>

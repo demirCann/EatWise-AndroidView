@@ -44,7 +44,7 @@
             <ImageView
                 android:id="@+id/mealImageView"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="@dimen/detail_image_height"
                 android:contentDescription="@string/meal_image"
                 android:scaleType="centerCrop"
                 tools:srcCompat="@tools:sample/avatars" />
@@ -53,13 +53,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="@dimen/padding_large">
 
                 <TextView
                     android:id="@+id/mealTitleTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="@dimen/padding_medium"
                     android:gravity="center"
                     android:textAppearance="?attr/textAppearanceHeadline5"
                     android:textStyle="bold"
@@ -68,16 +68,16 @@
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="@dimen/padding_large"
                     app:cardBackgroundColor="?attr/colorPrimaryContainer"
-                    app:cardCornerRadius="8dp">
+                    app:cardCornerRadius="@dimen/padding_medium">
 
                     <TextView
                         android:id="@+id/mealSummaryTextView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textAppearance="?attr/textAppearanceBodyMedium"
-                        android:padding="16dp"
+                        android:padding="@dimen/padding_large"
                         tools:text="Meal Summary" />
                 </androidx.cardview.widget.CardView>
 
@@ -85,23 +85,23 @@
                     android:id="@+id/ingredientsCardView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="@dimen/padding_large"
                     android:clickable="true"
                     android:focusable="true"
                     app:cardBackgroundColor="?attr/colorSecondaryContainer"
-                    app:cardCornerRadius="8dp">
+                    app:cardCornerRadius="@dimen/padding_medium">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
                         android:orientation="horizontal"
-                        android:padding="8dp">
+                        android:padding="@dimen/padding_medium">
 
                         <ImageView
                             android:id="@+id/ingredientsArrow"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
+                            android:layout_width="@dimen/padding_xlarge"
+                            android:layout_height="@dimen/padding_xlarge"
                             android:contentDescription="@string/down_arrow"
                             android:src="@drawable/ic_arrow_down"
                             android:visibility="visible"
@@ -110,7 +110,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
+                            android:layout_marginStart="@dimen/padding_medium"
                             android:text="@string/ingredients"
                             android:textStyle="bold"
                             android:textAppearance="?attr/textAppearanceBodyLarge" />
@@ -121,8 +121,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:paddingStart="16dp"
-                        android:paddingTop="32dp"
+                        android:paddingStart="@dimen/padding_large"
+                        android:paddingTop="@dimen/padding_xxlarge"
                         android:visibility="gone" />
 
                 </androidx.cardview.widget.CardView>
@@ -132,23 +132,23 @@
                     android:id="@+id/instructionsCardView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="@dimen/padding_large"
                     android:clickable="true"
                     android:focusable="true"
                     app:cardBackgroundColor="?attr/colorSecondaryContainer"
-                    app:cardCornerRadius="8dp">
+                    app:cardCornerRadius="@dimen/padding_medium">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
                         android:orientation="horizontal"
-                        android:padding="8dp">
+                        android:padding="@dimen/padding_medium">
 
                         <ImageView
                             android:id="@+id/instructionsArrow"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
+                            android:layout_width="@dimen/padding_xlarge"
+                            android:layout_height="@dimen/padding_xlarge"
                             android:contentDescription="@string/down_arrow"
                             android:src="@drawable/ic_arrow_down"
                             android:visibility="visible"
@@ -157,7 +157,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
+                            android:layout_marginStart="@dimen/padding_medium"
                             android:text="@string/instructions"
                             android:textStyle="bold"
                             tools:text="Instructions"
@@ -169,8 +169,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:paddingStart="16dp"
-                        android:paddingTop="32dp"
+                        android:paddingStart="@dimen/padding_large"
+                        android:paddingTop="@dimen/padding_xxlarge"
                         android:visibility="gone" />
 
                 </androidx.cardview.widget.CardView>

@@ -24,8 +24,8 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/chatRecyclerView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="@dimen/layout_zero"
+        android:layout_height="@dimen/layout_zero"
         app:layout_constraintBottom_toTopOf="@id/inputLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -35,9 +35,9 @@
 
     <ImageView
         android:id="@+id/selectedImagePreview"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_margin="8dp"
+        android:layout_width="@dimen/chat_selected_image_size"
+        android:layout_height="@dimen/chat_selected_image_size"
+        android:layout_margin="@dimen/padding_medium"
         android:visibility="gone"
         android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="@+id/chatRecyclerView"
@@ -47,9 +47,9 @@
 
     <LinearLayout
         android:id="@+id/inputLayout"
-        android:layout_width="0dp"
+        android:layout_width="@dimen/layout_zero"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
+        android:layout_margin="@dimen/padding_medium"
         android:background="@drawable/input_layout_border"
         android:orientation="horizontal"
         android:gravity="center_vertical"
@@ -59,14 +59,14 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/messageInputLayout"
-            android:layout_width="0dp"
+            android:layout_width="@dimen/layout_zero"
             android:layout_height="wrap_content"
             android:layout_weight="0.8"
             app:boxBackgroundMode="none"
             app:hintEnabled="false"
-            android:paddingEnd="8dp"
-            android:paddingBottom="8dp"
-            android:maxWidth="250dp">
+            android:paddingEnd="@dimen/padding_medium"
+            android:paddingBottom="@dimen/padding_medium"
+            android:maxWidth="@dimen/chat_user_message_max_width">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/messageInput"
@@ -89,8 +89,8 @@
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/send_button"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
+            android:paddingStart="@dimen/padding_medium"
+            android:paddingEnd="@dimen/padding_medium"
             android:src="@drawable/ic_arrow_up" />
 
     </LinearLayout>
