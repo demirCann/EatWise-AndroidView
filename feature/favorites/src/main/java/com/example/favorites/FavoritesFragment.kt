@@ -78,14 +78,24 @@ class FavoritesFragment : Fragment() {
                     when {
                         favoriteState.isLoading -> {
                             // show loading
+                            binding.progressBar.visibility = View.VISIBLE
+                            binding.recyclerView.visibility = View.GONE
+                            binding.errorText.visibility = View.GONE
                         }
 
                         favoriteState.favorites != null -> {
+                            binding.progressBar.visibility = View.GONE
+                            binding.recyclerView.visibility = View.VISIBLE
+                            binding.errorText.visibility = View.GONE
                             favoriteAdapter.submitFavoriteList(favoriteState.favorites)
                         }
 
                         favoriteState.errorMessage != null -> {
                             // show error message
+                            binding.progressBar.visibility = View.GONE
+                            binding.recyclerView.visibility = View.GONE
+                            binding.errorText.text = favoriteState.errorMessage
+                            binding.errorText.visibility = View.VISIBLE
                         }
                     }
                 }

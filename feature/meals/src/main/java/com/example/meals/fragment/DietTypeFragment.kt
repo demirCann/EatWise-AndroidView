@@ -37,7 +37,6 @@ class DietTypeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment
         _binding = FragmentDietTypeBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -92,21 +91,20 @@ class DietTypeFragment : Fragment() {
                 viewModel.mealState.collect { mealState ->
                     when {
                         mealState.isLoading -> {
-                            // Show loading with progress bar
-//                            binding.progressBar.visibility = View.VISIBLE
+                            binding.progressBar.visibility = View.VISIBLE
                             binding.recyclerView.visibility = View.GONE
                             binding.errorText.visibility = View.GONE
                         }
 
                         mealState.errorMessage != null -> {
-//                            binding.progressBar.visibility = View.GONE
+                            binding.progressBar.visibility = View.GONE
                             binding.recyclerView.visibility = View.GONE
                             binding.errorText.text = mealState.errorMessage
                             binding.errorText.visibility = View.VISIBLE
                         }
 
                         mealState.mealItems != null -> {
-//                            binding.progressBar.visibility = View.GONE
+                            binding.progressBar.visibility = View.GONE
                             binding.recyclerView.visibility = View.VISIBLE
                             binding.errorText.visibility = View.GONE
                             mealsAdapter.submitList(mealState.mealItems.results)

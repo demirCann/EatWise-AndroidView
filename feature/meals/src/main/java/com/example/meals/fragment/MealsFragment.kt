@@ -36,7 +36,6 @@ class MealsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment
         _binding = FragmentMealsBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -113,19 +112,26 @@ class MealsFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.mealStates[mealType]?.collect { state ->
+                viewModel.mealStates[mealType]?.collect { mealState ->
                     when {
-                        state.isLoading -> {
-                            // Show loading state
+                        mealState.isLoading -> {
+                            binding.progressBar.visibility = View.VISIBLE
+                            binding.scrollView.visibility = View.GONE
+                            binding.errorText.visibility = View.GONE
                         }
 
-                        state.mealItems != null -> {
-                            // Show meal items
-                            adapter.submitList(state.mealItems.results)
+                        mealState.mealItems != null -> {
+                            binding.progressBar.visibility = View.GONE
+                            binding.scrollView.visibility = View.VISIBLE
+                            binding.errorText.visibility = View.GONE
+                            adapter.submitList(mealState.mealItems.results)
                         }
 
-                        state.errorMessage != null -> {
-                            // Show error message
+                        mealState.errorMessage != null -> {
+                            binding.progressBar.visibility = View.GONE
+                            binding.scrollView.visibility = View.GONE
+                            binding.errorText.text = mealState.errorMessage
+                            binding.errorText.visibility = View.VISIBLE
                         }
                     }
                 }
