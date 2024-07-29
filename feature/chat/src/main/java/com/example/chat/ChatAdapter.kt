@@ -1,21 +1,14 @@
 package com.example.chat
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chat.databinding.ItemChatMessageBinding
 
-class ChatAdapter : RecyclerView.Adapter<ChatAdapter.ChatViewHolder>() {
-
-    private var messages: List<MessageFromGemini> = emptyList()
-
-    fun submitList(newMessages: List<MessageFromGemini>) {
-        messages = newMessages
-        notifyDataSetChanged()
-    }
+class ChatAdapter : ListAdapter<MessageFromGemini, ChatAdapter.ChatViewHolder>(DiffCallBack()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatAdapter.ChatViewHolder {
         val binding =
@@ -24,11 +17,9 @@ class ChatAdapter : RecyclerView.Adapter<ChatAdapter.ChatViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
-        val message = messages[position]
+        val message = getItem(position)
         holder.bind(message)
     }
-
-    override fun getItemCount(): Int = messages.size
 
     inner class ChatViewHolder(private val binding: ItemChatMessageBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -36,10 +27,7 @@ class ChatAdapter : RecyclerView.Adapter<ChatAdapter.ChatViewHolder>() {
             // Bind the message to the view
             binding.apply {
                 if (message.isUser) {
-                    Log.d(
-                        "ChatAdapter",
-                        "User message visibility: ${userMessageTextView.isVisible}"
-                    )
+
                     userMessageTextView.text = message.text
                     userMessageTextView.visibility = View.VISIBLE
                     aiMessageTextView.visibility = View.GONE
@@ -55,6 +43,22 @@ class ChatAdapter : RecyclerView.Adapter<ChatAdapter.ChatViewHolder>() {
                     aiMessageTextView.visibility = View.VISIBLE
                 }
             }
+        }
+    }
+
+    class DiffCallBack: DiffUtil.ItemCallback<MessageFromGemini>() {
+        override fun areItemsTheSame(
+            oldItem: MessageFromGemini,
+            newItem: MessageFromGemini
+        ): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(
+            oldItem: MessageFromGemini,
+            newItem: MessageFromGemini
+        ): Boolean {
+            return oldItem == newItem
         }
     }
 }

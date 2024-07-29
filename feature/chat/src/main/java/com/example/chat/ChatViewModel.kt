@@ -2,10 +2,13 @@ package com.example.chat
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.chat.Constants.DEFAULT_PROMPT
+import com.example.chat.Constants.FULL_PROMPT_FORMAT
+import com.example.chat.Constants.GEMINI_1_5_FLASH
 import com.example.chat.Constants.GEMINI_API_KEY
+import com.example.chat.Constants.GEMINI_PRO
 import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.BlockThreshold
 import com.google.ai.client.generativeai.type.HarmCategory
@@ -34,8 +37,8 @@ class ChatViewModel : ViewModel() {
     private val hateSpeechSafety =
         SafetySetting(HarmCategory.HATE_SPEECH, BlockThreshold.MEDIUM_AND_ABOVE)
 
-    private val generativeModelVision by lazy { createGenerativeModel("gemini-1.5-flash") }
-    private val generativeModelText by lazy { createGenerativeModel("gemini-pro") }
+    private val generativeModelVision by lazy { createGenerativeModel(GEMINI_1_5_FLASH) }
+    private val generativeModelText by lazy { createGenerativeModel(GEMINI_PRO) }
 
     private val safetySettings by lazy {
         listOf(
@@ -52,9 +55,8 @@ class ChatViewModel : ViewModel() {
     fun receiveMessageFromGemini() = viewModelScope.launch {
         val newMessage = _messageState.value.last().text
 
-        val systemMessage =
-            "Sen bir yemek uzmanısın. Sadece yemek tarifleri, malzemeler, besin değerleri ve yemekle ilgili diğer konular hakkında cevap ver. Başka konularla ilgili sorulara yanıt verme."
-        val fullPrompt = "$systemMessage\n\nKullanıcının sorusu: $newMessage"
+        val systemMessage = DEFAULT_PROMPT
+        val fullPrompt = "$systemMessage\n\n$FULL_PROMPT_FORMAT $newMessage"
 
         val response = generativeModelText.generateContent(
             prompt = fullPrompt
@@ -62,7 +64,6 @@ class ChatViewModel : ViewModel() {
         if (response.text != null) {
             _messageState.value += MessageFromGemini(response.text!!, false, getTimestamp())
         }
-        Log.d("ChatScreen", "Message received from Gemini: ${_messageState.value}")
     }
 
     fun receiveImageResponseFromGemini(bitmap: Bitmap) = viewModelScope.launch {
