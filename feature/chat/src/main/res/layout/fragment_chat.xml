@@ -1,99 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ChatFragment">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBarLayout"
+    <data>
+
+        <variable
+            name="chatViewModel"
+            type="com.example.chat.ChatViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="match_parent"
+        tools:context=".ChatFragment">
 
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/topAppBar"
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBarLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="?attr/actionBarSize"
-            app:title="AI Chat" />
-    </com.google.android.material.appbar.AppBarLayout>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/chatRecyclerView"
-        android:layout_width="@dimen/layout_zero"
-        android:layout_height="@dimen/layout_zero"
-        app:layout_constraintBottom_toTopOf="@id/inputLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/appBarLayout"
-        app:reverseLayout="true"
-        tools:listitem="@layout/item_chat_message" />
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/topAppBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="?attr/actionBarSize"
+                app:title="AI Chat" />
+        </com.google.android.material.appbar.AppBarLayout>
 
-    <ImageView
-        android:id="@+id/selectedImagePreview"
-        android:layout_width="@dimen/chat_selected_image_size"
-        android:layout_height="@dimen/chat_selected_image_size"
-        android:layout_margin="@dimen/padding_medium"
-        android:visibility="gone"
-        android:scaleType="centerCrop"
-        app:layout_constraintBottom_toBottomOf="@+id/chatRecyclerView"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:contentDescription="@string/selected_image_preview"/>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/chatRecyclerView"
+            android:layout_width="@dimen/layout_zero"
+            android:layout_height="@dimen/layout_zero"
+            app:layout_constraintBottom_toTopOf="@id/inputLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/appBarLayout"
+            app:reverseLayout="true"
+            tools:listitem="@layout/item_chat_message" />
 
+        <ImageView
+            android:id="@+id/selectedImagePreview"
+            android:layout_width="@dimen/chat_selected_image_size"
+            android:layout_height="@dimen/chat_selected_image_size"
+            android:layout_margin="@dimen/padding_medium"
+            android:contentDescription="@string/selected_image_preview"
+            android:scaleType="centerCrop"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/chatRecyclerView"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-    <LinearLayout
-        android:id="@+id/inputLayout"
-        android:layout_width="@dimen/layout_zero"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/padding_medium"
-        android:background="@drawable/input_layout_border"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/messageInputLayout"
+        <LinearLayout
+            android:id="@+id/inputLayout"
             android:layout_width="@dimen/layout_zero"
             android:layout_height="wrap_content"
-            android:layout_weight="0.8"
-            app:boxBackgroundMode="none"
-            app:hintEnabled="false"
-            android:paddingEnd="@dimen/padding_medium"
-            android:paddingBottom="@dimen/padding_medium"
-            android:maxWidth="@dimen/chat_user_message_max_width">
+            android:layout_margin="@dimen/padding_medium"
+            android:background="@drawable/input_layout_border"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/messageInput"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/messageInputLayout"
+                android:layout_width="@dimen/layout_zero"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.8"
+                android:maxWidth="@dimen/chat_user_message_max_width"
+                android:paddingEnd="@dimen/padding_medium"
+                android:paddingBottom="@dimen/padding_medium"
+                app:boxBackgroundMode="none"
+                app:hintEnabled="false">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/messageInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
-        <ImageButton
-            android:id="@+id/photoButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/select_photo"
-            android:src="@drawable/ic_gallery_2" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <ImageButton
-            android:id="@+id/sendButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/send_button"
-            android:paddingStart="@dimen/padding_medium"
-            android:paddingEnd="@dimen/padding_medium"
-            android:src="@drawable/ic_arrow_up" />
+            <ImageButton
+                android:id="@+id/photoButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/select_photo"
+                android:src="@drawable/ic_gallery_2" />
 
-    </LinearLayout>
+            <ImageButton
+                android:id="@+id/sendButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/send_button"
+                android:paddingStart="@dimen/padding_medium"
+                android:paddingEnd="@dimen/padding_medium"
+                android:src="@drawable/ic_arrow_up" />
+        </LinearLayout>
 
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>

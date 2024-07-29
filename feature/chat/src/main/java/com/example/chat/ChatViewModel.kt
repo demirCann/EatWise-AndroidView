@@ -85,5 +85,4 @@ class ChatViewModel : ViewModel() {
         val sdf = SimpleDateFormat("HH:mm aa")
         return sdf.format(Date())
     }
-
 }

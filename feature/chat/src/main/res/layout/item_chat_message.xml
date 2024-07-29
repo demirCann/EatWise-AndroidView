@@ -1,58 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="@dimen/padding_medium">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/userMessageCardView"
-        android:layout_width="@dimen/layout_zero"
+    <data>
+
+        <variable
+            name="message"
+            type="com.example.chat.MessageFromGemini" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent="0.75">
+        android:padding="@dimen/padding_medium">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/userMessageCardView"
+            visibilityOfMessage="@{message.isUser ? true : false}"
+            android:layout_width="@dimen/layout_zero"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="@dimen/padding_medium">
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.75">
 
-            <ImageView
-                android:id="@+id/userMessageImageView"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/chat_image_height"
-                android:contentDescription="@string/user_message_image"
-                android:scaleType="fitCenter"
-                android:visibility="gone"
-                tools:srcCompat="@tools:sample/avatars" />
-
-            <TextView
-                android:id="@+id/userMessageTextView"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="@dimen/padding_medium"
-                android:textColor="@android:color/black"
-                android:visibility="gone"
-                tools:text="User message" />
+                android:orientation="vertical"
+                android:padding="@dimen/padding_medium">
 
-        </LinearLayout>
+                <ImageView
+                    android:id="@+id/userMessageImageView"
+                    imageBitmap="@{message.image}"
+                    visibilityOfMessage="@{message.isUser &amp;&amp; message.image != null ? true : false}"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/chat_image_height"
+                    android:contentDescription="@string/user_message_image"
+                    android:scaleType="fitCenter"
+                    tools:srcCompat="@tools:sample/avatars" />
 
-    </androidx.cardview.widget.CardView>
+                <TextView
+                    android:id="@+id/userMessageTextView"
+                    visibilityOfMessage="@{message.isUser ? true : false}"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/padding_medium"
+                    android:text="@{message.text}"
+                    android:textColor="@android:color/black" />
 
-    <TextView
-        android:id="@+id/aiMessageTextView"
-        android:layout_width="@dimen/layout_zero"
-        android:layout_height="wrap_content"
-        android:background="@drawable/ai_message_rounded_background"
-        android:padding="@dimen/padding_medium"
-        android:textColor="@android:color/black"
-        android:visibility="gone"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent="0.75"
-        tools:text="AI message" />
+            </LinearLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:id="@+id/aiMessageTextView"
+            visibilityOfMessage="@{!message.isUser ? true : false}"
+            android:layout_width="@dimen/layout_zero"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ai_message_rounded_background"
+            android:padding="@dimen/padding_medium"
+            android:text="@{message.text}"
+            android:textColor="@android:color/black"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.75" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

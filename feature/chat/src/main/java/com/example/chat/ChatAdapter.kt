@@ -1,7 +1,6 @@
 package com.example.chat
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -23,30 +22,14 @@ class ChatAdapter : ListAdapter<MessageFromGemini, ChatAdapter.ChatViewHolder>(D
 
     inner class ChatViewHolder(private val binding: ItemChatMessageBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(message: MessageFromGemini) {
-            // Bind the message to the view
+        fun bind(messageFromGemini: MessageFromGemini) {
             binding.apply {
-                if (message.isUser) {
-
-                    userMessageTextView.text = message.text
-                    userMessageTextView.visibility = View.VISIBLE
-                    aiMessageTextView.visibility = View.GONE
-                    if (message.image != null) {
-                        userMessageImageView.setImageBitmap(message.image)
-                        userMessageImageView.visibility = View.VISIBLE
-                    } else {
-                        userMessageImageView.visibility = View.GONE
-                    }
-                } else {
-                    aiMessageTextView.text = message.text
-                    userMessageCardView.visibility = View.GONE
-                    aiMessageTextView.visibility = View.VISIBLE
-                }
+                message = messageFromGemini
             }
         }
     }
 
-    class DiffCallBack: DiffUtil.ItemCallback<MessageFromGemini>() {
+    class DiffCallBack : DiffUtil.ItemCallback<MessageFromGemini>() {
         override fun areItemsTheSame(
             oldItem: MessageFromGemini,
             newItem: MessageFromGemini
