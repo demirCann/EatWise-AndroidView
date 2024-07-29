@@ -92,7 +92,6 @@ class SearchFragment : Fragment() {
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (!query.isNullOrEmpty()) {
-                    binding.progressBar.visibility = View.VISIBLE
                     binding.emptyTextView.visibility = View.GONE
 
                     if (isFavoriteSearch) {
@@ -105,7 +104,6 @@ class SearchFragment : Fragment() {
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (newText.isNullOrEmpty()) {
                     searchAdapter.submitList(emptyList())
-                    binding.progressBar.visibility = View.GONE
                     binding.emptyTextView.visibility = View.VISIBLE
                 }
                 return true
@@ -124,10 +122,10 @@ class SearchFragment : Fragment() {
     }
 
     private fun handleNetworkSearchState(state: NetworkSearchState) {
-        binding.progressBar.visibility = View.GONE
         when {
             state.isLoading -> {
-                binding.progressBar.visibility = View.VISIBLE
+                binding.recyclerView.visibility = View.GONE
+                binding.emptyTextView.visibility = View.GONE
             }
 
             state.errorMessage != null -> {
@@ -151,10 +149,9 @@ class SearchFragment : Fragment() {
 
     private fun handleFavoriteSearchState(state: FavoriteSearchState) {
         Log.d("SearchFragment", "handleFavoriteSearchState: $state")
-        binding.progressBar.visibility = View.GONE
         when {
             state.isLoading -> {
-                binding.progressBar.visibility = View.VISIBLE
+                binding.recyclerView.visibility = View.GONE
             }
 
             state.errorMessage != null -> {
