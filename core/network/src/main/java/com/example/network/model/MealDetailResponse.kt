@@ -1,5 +1,6 @@
 package com.example.network.model
 
+import com.example.model.Info
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -41,6 +42,34 @@ data class MealDetailResponse(
     val extendedIngredients: List<ExtendedIngredient> = emptyList(),
     val summary: String = "",
     val winePairing: WinePairing = WinePairing()
+)
+
+data class MealDetail(
+    val id: Int = 0,
+    val title: String = "",
+    val image: String = "",
+    val imageType: String = "",
+    val summary: String = "",
+    val analyzedInstructions: List<AnalyzedInstruction> = emptyList(),
+    val extendedIngredients: List<ExtendedIngredient> = emptyList(),
+    var isFavorite: Boolean = false
+)
+
+fun MealDetailResponse.toMealDetail() = MealDetail(
+    id = id,
+    title = title,
+    image = image,
+    imageType = imageType,
+    summary = summary,
+    analyzedInstructions = analyzedInstructions,
+    extendedIngredients = extendedIngredients
+)
+
+fun MealDetail.toInfo() = Info(
+    id = id,
+    image = image,
+    imageType = imageType,
+    title = title
 )
 
 @Serializable
