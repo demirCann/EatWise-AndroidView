@@ -20,7 +20,7 @@ class MealTypeListViewModel @Inject constructor(
     private val repository: MealRepository
 ) : ViewModel() {
 
-    private val _mealState = MutableStateFlow<MealState>(MealState(isLoading = true))
+    private val _mealState = MutableStateFlow(MealState(isLoading = true))
     val mealState = _mealState.asStateFlow()
 
     private var type: String? = null
@@ -34,14 +34,22 @@ class MealTypeListViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             repository.getMealsForTypes(mealType, number).collect { apiResult ->
                 _mealState.value = when (apiResult) {
-                    is ApiResult.Success -> MealState(
-                        isLoading = false,
-                        mealItems = apiResult.data?.toMealList()
-                    )
+                    is ApiResult.Success -> {
+                        val mealList = apiResult.data?.toMealList()
+                        mealList?.results?.forEach { info ->
+                            info.isFavorite = repository.isFavorite(info.id)
+                        }
+                        MealState(
+                            isLoading = false,
+                            mealItems = mealList
+                        )
+                    }
+
                     is ApiResult.Error -> MealState(
                         isLoading = false,
                         errorMessage = apiResult.message ?: ERROR_OCCURRED
                     )
+
                     is ApiResult.Loading -> MealState(
                         isLoading = true
                     )

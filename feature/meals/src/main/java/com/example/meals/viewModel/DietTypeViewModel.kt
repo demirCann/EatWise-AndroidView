@@ -27,10 +27,16 @@ class DietTypeViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             repository.getMealsForDiet(diet, number).collect { apiResult ->
                 _mealState.value = when (apiResult) {
-                    is ApiResult.Success -> MealState(
-                        isLoading = false,
-                        mealItems = apiResult.data?.toMealList()
-                    )
+                    is ApiResult.Success -> {
+                        val mealList = apiResult.data?.toMealList()
+                        mealList?.results?.forEach { info ->
+                            info.isFavorite = repository.isFavorite(info.id)
+                        }
+                        MealState(
+                            isLoading = false,
+                            mealItems = mealList
+                        )
+                    }
 
                     is ApiResult.Error -> MealState(
                         isLoading = false,
