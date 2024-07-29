@@ -20,174 +20,186 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/nestedScrollView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        <LinearLayout
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/nestedScrollView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/mealImageView"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/detail_image_height"
-                android:contentDescription="@string/meal_image"
-                android:scaleType="centerCrop"
-                tools:srcCompat="@tools:sample/avatars" />
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="@dimen/padding_large">
+                android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/mealTitleTextView"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/mealImageView"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/detail_image_height"
+                        android:layout_marginEnd="0dp"
+                        android:layout_marginStart="0dp"
+                        android:contentDescription="@string/meal_image"
+                        android:scaleType="centerCrop"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        tools:srcCompat="@tools:sample/avatars" />
+
+                    <com.example.feature.utils.FavoriteButton
+                        android:id="@+id/favoriteButton"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_marginEnd="16dp"
+                        android:src="@drawable/filled_favorite"
+                        app:layout_constraintBottom_toBottomOf="@id/mealImageView"
+                        app:layout_constraintEnd_toEndOf="@id/mealImageView" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/padding_medium"
-                    android:gravity="center"
-                    android:textAppearance="?attr/textAppearanceHeadline5"
-                    android:textStyle="bold"
-                    tools:text="Meal Title" />
-
-                <androidx.cardview.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/padding_large"
-                    app:cardBackgroundColor="?attr/colorPrimaryContainer"
-                    app:cardCornerRadius="@dimen/padding_medium">
+                    android:orientation="vertical"
+                    android:padding="@dimen/padding_large">
 
                     <TextView
-                        android:id="@+id/mealSummaryTextView"
+                        android:id="@+id/mealTitleTextView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textAppearance="?attr/textAppearanceBodyMedium"
-                        android:padding="@dimen/padding_large"
-                        tools:text="Meal Summary" />
-                </androidx.cardview.widget.CardView>
+                        android:layout_marginTop="@dimen/padding_medium"
+                        android:gravity="center"
+                        android:textAppearance="?attr/textAppearanceHeadline5"
+                        android:textStyle="bold"
+                        tools:text="Meal Title" />
 
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/ingredientsCardView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/padding_large"
-                    android:clickable="true"
-                    android:focusable="true"
-                    app:cardBackgroundColor="?attr/colorSecondaryContainer"
-                    app:cardCornerRadius="@dimen/padding_medium">
-
-                    <LinearLayout
+                    <androidx.cardview.widget.CardView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:padding="@dimen/padding_medium">
-
-                        <ImageView
-                            android:id="@+id/ingredientsArrow"
-                            android:layout_width="@dimen/padding_xlarge"
-                            android:layout_height="@dimen/padding_xlarge"
-                            android:contentDescription="@string/down_arrow"
-                            android:src="@drawable/ic_arrow_down"
-                            android:visibility="visible"
-                            tools:srcCompat="@tools:sample/avatars" />
+                        android:layout_marginTop="@dimen/padding_large"
+                        app:cardBackgroundColor="?attr/colorPrimaryContainer"
+                        app:cardCornerRadius="@dimen/padding_medium">
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:id="@+id/mealSummaryTextView"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/padding_medium"
-                            android:text="@string/ingredients"
-                            android:textStyle="bold"
-                            android:textAppearance="?attr/textAppearanceBodyLarge" />
-                    </LinearLayout>
+                            android:padding="@dimen/padding_large"
+                            android:textAppearance="?attr/textAppearanceBodyMedium"
+                            tools:text="Meal Summary" />
+                    </androidx.cardview.widget.CardView>
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/ingredientsList"
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/ingredientsCardView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:paddingStart="@dimen/padding_large"
-                        android:paddingTop="@dimen/padding_xxlarge"
-                        android:visibility="gone" />
+                        android:layout_marginTop="@dimen/padding_large"
+                        android:clickable="true"
+                        android:focusable="true"
+                        app:cardBackgroundColor="?attr/colorSecondaryContainer"
+                        app:cardCornerRadius="@dimen/padding_medium">
 
-                </androidx.cardview.widget.CardView>
-
-
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/instructionsCardView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/padding_large"
-                    android:clickable="true"
-                    android:focusable="true"
-                    app:cardBackgroundColor="?attr/colorSecondaryContainer"
-                    app:cardCornerRadius="@dimen/padding_medium">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:padding="@dimen/padding_medium">
-
-                        <ImageView
-                            android:id="@+id/instructionsArrow"
-                            android:layout_width="@dimen/padding_xlarge"
-                            android:layout_height="@dimen/padding_xlarge"
-                            android:contentDescription="@string/down_arrow"
-                            android:src="@drawable/ic_arrow_down"
-                            android:visibility="visible"
-                            tools:srcCompat="@tools:sample/avatars" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
+                        <LinearLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/padding_medium"
-                            android:text="@string/instructions"
-                            android:textStyle="bold"
-                            tools:text="Instructions"
-                            android:textAppearance="?attr/textAppearanceBodyLarge" />
-                    </LinearLayout>
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="@dimen/padding_medium">
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/instructionsList"
+                            <ImageView
+                                android:id="@+id/ingredientsArrow"
+                                android:layout_width="@dimen/padding_xlarge"
+                                android:layout_height="@dimen/padding_xlarge"
+                                android:contentDescription="@string/down_arrow"
+                                android:src="@drawable/ic_arrow_down"
+                                android:visibility="visible"
+                                tools:srcCompat="@tools:sample/avatars" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/padding_medium"
+                                android:text="@string/ingredients"
+                                android:textAppearance="?attr/textAppearanceBodyLarge"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/ingredientsRecyclerView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/margin_xxlarge"
+                            android:orientation="vertical"
+                            android:visibility="gone" />
+
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/instructionsCardView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:paddingStart="@dimen/padding_large"
-                        android:paddingTop="@dimen/padding_xxlarge"
-                        android:visibility="gone" />
+                        android:layout_marginTop="@dimen/padding_large"
+                        android:clickable="true"
+                        android:focusable="true"
+                        app:cardBackgroundColor="?attr/colorSecondaryContainer"
+                        app:cardCornerRadius="@dimen/padding_medium">
 
-                </androidx.cardview.widget.CardView>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="@dimen/padding_medium">
+
+                            <ImageView
+                                android:id="@+id/instructionsArrow"
+                                android:layout_width="@dimen/padding_xlarge"
+                                android:layout_height="@dimen/padding_xlarge"
+                                android:contentDescription="@string/down_arrow"
+                                android:src="@drawable/ic_arrow_down"
+                                android:visibility="visible"
+                                tools:srcCompat="@tools:sample/avatars" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/padding_medium"
+                                android:text="@string/instructions"
+                                android:textAppearance="?attr/textAppearanceBodyLarge"
+                                android:textStyle="bold"
+                                tools:text="Instructions" />
+                        </LinearLayout>
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/instructionsRecyclerView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/margin_xxlarge"
+                            android:orientation="vertical"
+                            android:visibility="gone" />
+
+                    </androidx.cardview.widget.CardView>
+                </LinearLayout>
+
             </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
 
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/errorText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@android:color/holo_red_dark"
         android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:textColor="@android:color/holo_red_dark" />
+        android:layout_gravity="center" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

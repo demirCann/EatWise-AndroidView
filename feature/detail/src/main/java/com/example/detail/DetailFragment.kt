@@ -5,7 +5,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -13,13 +12,15 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import com.example.detail.databinding.FragmentDetailBinding
 import com.example.feature.DetailFragmentArguments
 import com.example.feature.utils.AppBarUtil
+import com.example.network.model.toInfo
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import org.jsoup.Jsoup
 
 @AndroidEntryPoint
 class DetailFragment : Fragment() {
@@ -30,10 +31,11 @@ class DetailFragment : Fragment() {
     private val viewModel: DetailViewModel by viewModels()
     private val args: DetailFragmentArguments by navArgs()
 
-    private val isIngredientsExpanded = MutableStateFlow(false)
-    private val isInstructionsExpanded = MutableStateFlow(false)
-    private lateinit var ingredients: List<String>
-    private lateinit var instructions: List<String>
+    private lateinit var detailInstructionsAdapter: DetailInstructionsAdapter
+    private lateinit var detailIngredientsAdapter: DetailIngredientsAdapter
+
+    private var ingredients: List<String> = emptyList()
+    private var instructions: List<String> = emptyList()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,41 +49,57 @@ class DetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         AppBarUtil.setTopAppBar(this, binding.toolbar, binding.toolbar.title.toString())
+
         setupIngredientsCard()
         setupInstructionsCard()
 
-
-        viewModel.fetchMealDetail(args.mealId)
         fetchMealDetail()
+
+        setUpRecyclersView()
+
         observeExpandedStates()
+
     }
 
     private fun fetchMealDetail() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.fetchMealDetail(args.mealId)
                 viewModel.selectedMeal.collect { detailState ->
-                    when (detailState) {
-                        is MealDetailState.Success -> {
+                    when {
+                        detailState.isLoading -> {
+                            binding.progressBar.visibility = View.VISIBLE
+                            binding.nestedScrollView.visibility = View.GONE
+                            binding.errorText.visibility = View.GONE
+                        }
+
+                        detailState.detail != null -> {
+                            binding.progressBar.visibility = View.GONE
+                            binding.nestedScrollView.visibility = View.VISIBLE
                             val mealDetail = detailState.detail
                             binding.mealTitleTextView.text = mealDetail.title
-                            binding.mealSummaryTextView.text = formatSummary(mealDetail.summary)
+                            binding.mealSummaryTextView.text = mealDetail.summary.formatSummary()
                             binding.mealImageView.load(mealDetail.image)
-
                             ingredients = mealDetail.extendedIngredients.map { it.original }
-                            Log.d("DetailFragment", "Ingredients: $ingredients")
-
                             instructions =
                                 mealDetail.analyzedInstructions.flatMap { it.steps }.map { it.step }
-                            Log.d("DetailFragment", "Instructions: $instructions")
-
+                            binding.favoriteButton.isFavorite = mealDetail.isFavorite
+                            binding.favoriteButton.setOnClickListener {
+                                mealDetail.isFavorite = !mealDetail.isFavorite
+                                binding.favoriteButton.isFavorite = mealDetail.isFavorite
+                                if (mealDetail.isFavorite) {
+                                    viewModel.addFavorite(mealDetail.toInfo())
+                                } else {
+                                    viewModel.removeFavorite(mealDetail.id)
+                                }
+                            }
                         }
 
-                        is MealDetailState.Error -> {
-                            binding.mealTitleTextView.text = detailState.message
-                        }
-
-                        is MealDetailState.Loading -> {
-                            // show loading
+                        detailState.errorMessage != null -> {
+                            binding.progressBar.visibility = View.GONE
+                            binding.nestedScrollView.visibility = View.GONE
+                            binding.mealTitleTextView.text = detailState.errorMessage
+                            binding.errorText.visibility = View.VISIBLE
                         }
                     }
                 }
@@ -89,52 +107,50 @@ class DetailFragment : Fragment() {
         }
     }
 
-    private fun setIngredients(ingredients: List<String>) {
-        binding.ingredientsList.removeAllViews()
-        ingredients.forEach { ingredient ->
-            val textView = TextView(requireContext()).apply {
-                text = ingredient
-                textSize = 16f
-                setPadding(8, 8, 8, 8)
-            }
-            binding.ingredientsList.addView(textView)
-        }
-    }
+    private fun setUpRecyclersView() {
 
-    private fun setInstructions(instructions: List<String>) {
-        binding.instructionsList.removeAllViews()
-        instructions.forEach { instruction ->
-            val textView = TextView(requireContext()).apply {
-                text = instruction
-                textSize = 16f
-                setPadding(8, 8, 8, 8)
-            }
-            binding.instructionsList.addView(textView)
+        detailInstructionsAdapter = DetailInstructionsAdapter()
+        detailIngredientsAdapter = DetailIngredientsAdapter()
+
+        binding.ingredientsRecyclerView.apply {
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            adapter = detailIngredientsAdapter
+        }
+
+        binding.instructionsRecyclerView.apply {
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            adapter = detailInstructionsAdapter
         }
     }
 
     private fun setupIngredientsCard() {
+        Log.d("DetailFragment", "setup")
         binding.ingredientsCardView.setOnClickListener {
-            isIngredientsExpanded.value = !isIngredientsExpanded.value
+            Log.d("DetailFragment", "setupIngredientsCard")
+            viewModel.updateIngredientsExpanded()
         }
     }
 
     private fun setupInstructionsCard() {
         binding.instructionsCardView.setOnClickListener {
-            isInstructionsExpanded.value = !isInstructionsExpanded.value
+            viewModel.updateInstructionsExpanded()
         }
     }
 
     private fun observeExpandedStates() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                isIngredientsExpanded.collect { isExpanded ->
-                    binding.ingredientsList.isVisible = isExpanded
+                viewModel.isIngredientsExpanded.collect { isExpanded ->
+                    binding.ingredientsRecyclerView.isVisible = isExpanded
+                    Log.d("DetailFragment", "isIngredientsExpanded: $isExpanded")
                     if (isExpanded) {
-                        setIngredients(ingredients)
+                        detailIngredientsAdapter.submitList(ingredients)
+                        binding.ingredientsRecyclerView.visibility = View.VISIBLE
+                    } else {
+                        binding.ingredientsRecyclerView.visibility = View.GONE
                     }
                     binding.ingredientsArrow.setImageResource(
-                        if (isExpanded) R.drawable.ic_arrow_up else R.drawable.ic_arrow_down
+                        if (isExpanded) R.drawable.arrow_up else R.drawable.ic_arrow_down
                     )
                 }
             }
@@ -142,13 +158,17 @@ class DetailFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                isInstructionsExpanded.collect { isExpanded ->
-                    binding.instructionsList.isVisible = isExpanded
+                viewModel.isInstructionsExpanded.collect { isExpanded ->
+                    Log.d("DetailFragment", "isInstructionsExpanded: $isExpanded")
+                    binding.instructionsRecyclerView.isVisible = isExpanded
                     if (isExpanded) {
-                        setInstructions(instructions)
+                        detailInstructionsAdapter.submitList(instructions)
+                        binding.instructionsRecyclerView.visibility = View.VISIBLE
+                    } else {
+                        binding.instructionsRecyclerView.visibility = View.GONE
                     }
                     binding.instructionsArrow.setImageResource(
-                        if (isExpanded) R.drawable.ic_arrow_up else R.drawable.ic_arrow_down
+                        if (isExpanded) R.drawable.arrow_up else R.drawable.ic_arrow_down
                     )
                 }
             }
@@ -159,4 +179,10 @@ class DetailFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+}
+
+fun String.formatSummary(): String {
+    val document = Jsoup.parse(this)
+    val text = document.text()
+    return text.replace("<b>", "").replace("</b>", "")
 }
