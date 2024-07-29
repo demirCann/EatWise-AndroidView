@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("kotlin-kapt")
 }
 
 android {
@@ -26,6 +27,7 @@ android {
 
     buildFeatures {
         viewBinding = true
+        dataBinding = true
     }
 
     compileOptions {
@@ -61,4 +63,8 @@ dependencies {
 
     // Fragment
     implementation(libs.androidx.fragment)
+}
+
+kapt {
+    correctErrorTypes = true
 }

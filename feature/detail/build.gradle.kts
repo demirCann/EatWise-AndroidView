@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
     id("androidx.navigation.safeargs")
+    id("kotlin-kapt")
 }
 
 android {
@@ -29,6 +30,7 @@ android {
 
     buildFeatures {
         viewBinding = true
+        dataBinding = true
     }
 
     compileOptions {
@@ -75,4 +77,8 @@ dependencies {
 
     // Jsoup
     implementation(libs.jsoup)
+}
+
+kapt {
+    correctErrorTypes = true
 }

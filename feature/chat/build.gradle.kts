@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
+    id("kotlin-kapt")
 }
 
 android {
@@ -28,6 +29,7 @@ android {
 
     buildFeatures {
         viewBinding = true
+        dataBinding = true
     }
 
     compileOptions {
@@ -67,5 +69,8 @@ dependencies {
 
     // Generative Model
     implementation(libs.generativeai)
+}
 
+kapt {
+    correctErrorTypes = true
 }

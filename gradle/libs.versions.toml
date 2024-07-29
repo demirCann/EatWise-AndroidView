@@ -1,6 +1,6 @@
 [versions]
 agp = "8.4.2"
-kotlin = "1.9.23"
+kotlin = "1.9.24"
 coreKtx = "1.13.1"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -15,7 +15,7 @@ kotlinxSerializationJson = "1.6.3"
 hilt = "2.51.1"
 hiltExt = "1.2.0"
 androidxWork = "2.9.0"
-ksp = "1.9.23-1.0.19"
+ksp = "1.9.24-1.0.20"
 chuckerLibrary = "4.0.0"
 chuckerLibraryNoOp = "4.0.0"
 room = "2.6.1"
@@ -71,7 +71,6 @@ androidx-core-testing = { group = "androidx.arch.core", name = "core-testing", v
 lottie = { group = "com.airbnb.android", name = "lottie", version.ref = "lottie" }
 
 
-
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
@@ -79,4 +78,3 @@ android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
-
