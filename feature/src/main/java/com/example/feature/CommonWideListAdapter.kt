@@ -5,8 +5,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
+import com.example.database.model.FavoriteMealEntity
 import com.example.feature.databinding.MealItemLayoutBinding
-import com.example.model.FavoriteMeal
 import com.example.model.Info
 
 class MealsTypeAdapter(
@@ -22,7 +22,7 @@ class MealsTypeAdapter(
         notifyDataSetChanged()
     }
 
-    fun submitFavoriteList(newMeals: List<FavoriteMeal>) {
+    fun submitFavoriteList(newMeals: List<FavoriteMealEntity>) {
         meals = newMeals.map { it.toInfo() }
         notifyDataSetChanged()
     }
@@ -69,7 +69,7 @@ class MealsTypeAdapter(
     }
 }
 
-fun FavoriteMeal.toInfo() = Info(
+fun FavoriteMealEntity.toInfo() = Info(
     id = id,
     image = image,
     imageType = imageType,
