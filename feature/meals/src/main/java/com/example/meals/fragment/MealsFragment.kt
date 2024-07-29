@@ -94,16 +94,14 @@ class MealsFragment : Fragment() {
     }
 
     private fun setupObservers() {
-        val allItems = mutableListOf<MealItem>()
-
         viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                // Collect carousel items once and add to list
-                val carouselItems = MealItem.Carousel(viewModel.carouselItems)
-                allItems.add(carouselItems)
-                mealsAdapter.submitList(allItems.toList())
 
-                // Collect meal states
+            val allItems = mutableListOf<MealItem>()
+
+            val carouselItems = MealItem.Carousel(viewModel.carouselItems)
+            allItems.add(carouselItems)
+
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.mealStates.forEach { (mealType, stateFlow) ->
                     launch {
                         stateFlow.collect { mealState ->
@@ -120,6 +118,7 @@ class MealsFragment : Fragment() {
                                     binding.errorText.visibility = View.GONE
                                     val mealSection =
                                         MealItem.MealSection(mealType, mealState.mealItems.results)
+                                    allItems.removeAll { it is MealItem.MealSection && it.type == mealType }
                                     allItems.add(mealSection)
                                     mealsAdapter.submitList(allItems.toList())
                                 }
@@ -131,6 +130,7 @@ class MealsFragment : Fragment() {
                                     binding.errorText.visibility = View.VISIBLE
                                 }
                             }
+                            mealsAdapter.submitList(allItems.toList())
                         }
                     }
                 }
