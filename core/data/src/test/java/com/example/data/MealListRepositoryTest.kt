@@ -4,7 +4,7 @@ import com.example.data.repository.MealRepositoryImpl
 import com.example.database.source.FavoriteLocalDataSource
 import com.example.network.model.MealResponse
 import com.example.network.model.Result
-import com.example.network.model.toMeal
+import com.example.network.model.toMealList
 import com.example.network.source.MealRemoteDataSource
 import com.example.util.ApiResult
 import io.mockk.coEvery
@@ -16,7 +16,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
-class MealRepositoryTest {
+class MealListRepositoryTest {
     private lateinit var mealRemoteDataSource: MealRemoteDataSource
     private lateinit var mealLocalDataSource: FavoriteLocalDataSource
     private lateinit var repository: MealRepositoryImpl
@@ -48,7 +48,7 @@ class MealRepositoryTest {
 
         val result = repository.getMealsForTypes("main course", 10).first()
         assert(result is ApiResult.Success)
-        assertEquals(mockResponse.toMeal(), (result as ApiResult.Success).data)
+        assertEquals(mockResponse.toMealList(), (result as ApiResult.Success).data)
     }
 
     @Test
