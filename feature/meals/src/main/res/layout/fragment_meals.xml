@@ -1,93 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:label="@string/meals"
+    android:orientation="vertical"
     tools:context=".fragment.MealsFragment">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/topAppBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="?attr/actionBarSize"
-            app:title="@string/meals"
-            app:menu="@menu/top_app_bar_menu" />
+            app:menu="@menu/top_app_bar_menu"
+            app:title="@string/meals" />
 
     </com.google.android.material.appbar.AppBarLayout>
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/mealsRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/layout_zero"
+        android:layout_marginTop="@dimen/padding_medium"
+        android:layout_marginBottom="@dimen/padding_medium"
+        android:padding="@dimen/padding_large"
+        android:scrollbars="none"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/appBarLayout" />
 
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <ScrollView
-        android:id="@+id/scrollView"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:padding="16dp"
-        android:paddingEnd="0dp"
-        android:scrollbars="none">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <include
-                android:id="@+id/carousel"
-                layout="@layout/carousel_layout" />
-
-            <include
-                android:id="@+id/breakfastSection"
-                layout="@layout/meal_section_layout" />
-
-            <include
-                android:id="@+id/mainCourseSection"
-                layout="@layout/meal_section_layout" />
-
-            <include
-                android:id="@+id/dessertSection"
-                layout="@layout/meal_section_layout" />
-
-            <include
-                android:id="@+id/snackSection"
-                layout="@layout/meal_section_layout" />
-
-            <include
-                android:id="@+id/soupSection"
-                layout="@layout/meal_section_layout" />
-
-            <include
-                android:id="@+id/drinkSection"
-                layout="@layout/meal_section_layout" />
-
-        </LinearLayout>
-    </ScrollView>
-
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/errorText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:text="@string/error"
         android:textColor="@android:color/holo_red_dark"
-        android:text="@string/error" />
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

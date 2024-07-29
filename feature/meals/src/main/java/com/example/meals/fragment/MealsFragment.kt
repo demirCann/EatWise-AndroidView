@@ -11,15 +11,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.feature.MealsTypeAdapter
 import com.example.feature.utils.NavigationUtil
 import com.example.meals.R
-import com.example.meals.adapter.CarouselAdapter
+import com.example.meals.adapter.MealAdapter
 import com.example.meals.databinding.FragmentMealsBinding
-import com.example.meals.databinding.MealSectionLayoutBinding
+import com.example.meals.model.MealItem
 import com.example.meals.model.MealType
 import com.example.meals.viewModel.MealsViewModel
-import com.google.android.material.carousel.CarouselLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -31,6 +29,7 @@ class MealsFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: MealsViewModel by viewModels()
+    private lateinit var mealsAdapter: MealAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,7 +42,8 @@ class MealsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupCarousel()
+        setupRecyclerView()
+        setupObservers()
 
         NavigationUtil.setupSearchButton(
             this,
@@ -52,97 +52,89 @@ class MealsFragment : Fragment() {
             MealsFragmentDirections.actionMealsFragmentToSearchFragment()
         )
 
-        val mealSections = listOf(
-            binding.breakfastSection to MealType.BREAKFAST,
-            binding.mainCourseSection to MealType.MAIN_COURSE,
-            binding.dessertSection to MealType.DESSERT,
-            binding.snackSection to MealType.SNACK,
-            binding.soupSection to MealType.SOUP,
-            binding.drinkSection to MealType.DRINK
-        )
-
-        mealSections.forEach { (sectionBinding, mealType) ->
-            setupRecyclerView(sectionBinding, mealType)
-            viewModel.fetchMealsForTypes(mealType)
-        }
-
-    }
-
-    private fun setupCarousel() {
-
-        val carouselItem = viewModel.carouselItems
-
-        val carouselAdapter = CarouselAdapter(carouselItem) { diet ->
-            // Handle click to navigate diet screen
-            val action = MealsFragmentDirections.actionMealsFragmentToDietTypeFragment(diet)
-            findNavController().navigate(action)
-        }
-
-        binding.carousel.carouselRecyclerView.apply {
-            layoutManager = CarouselLayoutManager()
-            adapter = carouselAdapter
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                MealType.entries.forEach {
+                    viewModel.fetchMealsForTypes(it)
+                }
+            }
         }
     }
 
-    private fun setupRecyclerView(sectionBinding: MealSectionLayoutBinding, mealType: MealType) {
+    private fun setupRecyclerView() {
 
-        sectionBinding.mealTypeTitle.text =
-            mealType.type.replaceFirst(mealType.type[0], mealType.type[0].uppercaseChar())
-
-        val adapter = MealsTypeAdapter(
-            isWide = false,
-            onClickedItem = { mealId ->
-                // Handle click to navigate to meal details screen
+        mealsAdapter = MealAdapter(
+            onClickedCarouselItem = { dietType ->
+                val action = MealsFragmentDirections.actionMealsFragmentToDietTypeFragment(dietType)
+                findNavController().navigate(action)
+            },
+            onClickedMealItem = { mealId ->
                 val action = MealsFragmentDirections.actionMealsFragmentToDetailFragment(mealId)
                 findNavController().navigate(action)
             },
             onFavoriteClicked = { meal ->
-                // Handle click to add to favorites
                 if (meal.isFavorite) {
                     viewModel.addFavorite(meal)
                 } else {
                     viewModel.removeFavorite(meal.id)
                 }
+            },
+            onClickedSeeAll = { mealType ->
+                val action =
+                    MealsFragmentDirections.actionMealsFragmentToMealTypeListFragment(mealType)
+                findNavController().navigate(action)
+
             }
         )
 
-        sectionBinding.mealRecyclerView.layoutManager =
-            LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        sectionBinding.mealRecyclerView.adapter = adapter
+        binding.mealsRecyclerView.apply {
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            adapter = mealsAdapter
+        }
+    }
+
+    private fun setupObservers() {
+        val allItems = mutableListOf<MealItem>()
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.mealStates[mealType]?.collect { mealState ->
-                    when {
-                        mealState.isLoading -> {
-                            binding.progressBar.visibility = View.VISIBLE
-                            binding.scrollView.visibility = View.GONE
-                            binding.errorText.visibility = View.GONE
-                        }
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                // Collect carousel items once and add to list
+                val carouselItems = MealItem.Carousel(viewModel.carouselItems)
+                allItems.add(carouselItems)
+                mealsAdapter.submitList(allItems.toList())
 
-                        mealState.mealItems != null -> {
-                            binding.progressBar.visibility = View.GONE
-                            binding.scrollView.visibility = View.VISIBLE
-                            binding.errorText.visibility = View.GONE
-                            adapter.submitList(mealState.mealItems.results)
-                        }
+                // Collect meal states
+                viewModel.mealStates.forEach { (mealType, stateFlow) ->
+                    launch {
+                        stateFlow.collect { mealState ->
+                            when {
+                                mealState.isLoading -> {
+                                    binding.progressBar.visibility = View.VISIBLE
+                                    binding.mealsRecyclerView.visibility = View.GONE
+                                    binding.errorText.visibility = View.GONE
+                                }
 
-                        mealState.errorMessage != null -> {
-                            binding.progressBar.visibility = View.GONE
-                            binding.scrollView.visibility = View.GONE
-                            binding.errorText.text = mealState.errorMessage
-                            binding.errorText.visibility = View.VISIBLE
+                                mealState.mealItems != null -> {
+                                    binding.progressBar.visibility = View.GONE
+                                    binding.mealsRecyclerView.visibility = View.VISIBLE
+                                    binding.errorText.visibility = View.GONE
+                                    val mealSection =
+                                        MealItem.MealSection(mealType, mealState.mealItems.results)
+                                    allItems.add(mealSection)
+                                    mealsAdapter.submitList(allItems.toList())
+                                }
+
+                                mealState.errorMessage != null -> {
+                                    binding.progressBar.visibility = View.GONE
+                                    binding.mealsRecyclerView.visibility = View.GONE
+                                    binding.errorText.text = mealState.errorMessage
+                                    binding.errorText.visibility = View.VISIBLE
+                                }
+                            }
                         }
                     }
                 }
             }
-        }
-
-        sectionBinding.seeAllText.setOnClickListener {
-            // Handle click to navigate to meal type screen
-            val action =
-                MealsFragmentDirections.actionMealsFragmentToMealTypeListFragment(mealType.type)
-            findNavController().navigate(action)
         }
     }
 
@@ -150,5 +142,4 @@ class MealsFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
 }

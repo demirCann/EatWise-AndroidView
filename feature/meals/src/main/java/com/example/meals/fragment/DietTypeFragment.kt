@@ -32,7 +32,6 @@ class DietTypeFragment : Fragment() {
 
     private lateinit var mealsAdapter: MealsTypeAdapter
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
