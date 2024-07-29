@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="4dp"
-    android:elevation="4dp"
-    app:cardCornerRadius="12dp"
+    android:layout_margin="@dimen/padding_small"
+    android:elevation="@dimen/padding_small"
+    app:cardCornerRadius="@dimen/corner_radius_small"
     android:id="@+id/favoriteItemLayout">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -14,8 +14,8 @@
 
         <ImageView
             android:id="@+id/mealImage"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_width="@dimen/layout_zero"
+            android:layout_height="@dimen/layout_zero"
             android:contentDescription="@string/meal_image"
             android:scaleType="centerCrop"
             app:layout_constraintDimensionRatio="H,1:1"
@@ -26,14 +26,14 @@
 
         <TextView
             android:id="@+id/mealTitle"
-            android:layout_width="0dp"
+            android:layout_width="@dimen/layout_zero"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginTop="@dimen/padding_medium"
+            android:layout_marginStart="@dimen/padding_medium"
+            android:layout_marginEnd="@dimen/padding_medium"
             android:ellipsize="end"
             android:maxLines="2"
-            android:textSize="16sp"
+            android:textSize="@dimen/text_size_medium"
             android:textStyle="bold"
             app:layout_constraintTop_toBottomOf="@id/mealImage"
             app:layout_constraintStart_toStartOf="parent"
@@ -43,8 +43,8 @@
             android:id="@+id/favoriteButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="56dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginTop="@dimen/padding_xxxlarge"
+            android:layout_marginEnd="@dimen/padding_large"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/favorite_button"
             android:src="@drawable/filled_favorite"

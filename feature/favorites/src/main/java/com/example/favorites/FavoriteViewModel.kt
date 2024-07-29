@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.repository.MealRepository
 import com.example.database.model.FavoriteMealEntity
-import com.example.model.FavoriteMeal
 import com.example.util.DaoResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
