@@ -17,7 +17,7 @@
 
         <androidx.cardview.widget.CardView
             android:id="@+id/userMessageCardView"
-            visibilityOfMessage="@{message.isUser ? true : false}"
+            visibilityOfItem="@{message.isUser ? true : false}"
             android:layout_width="@dimen/layout_zero"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
@@ -33,7 +33,7 @@
                 <ImageView
                     android:id="@+id/userMessageImageView"
                     imageBitmap="@{message.image}"
-                    visibilityOfMessage="@{message.isUser &amp;&amp; message.image != null ? true : false}"
+                    visibilityOfItem="@{message.isUser &amp;&amp; message.image != null ? true : false}"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/chat_image_height"
                     android:contentDescription="@string/user_message_image"
@@ -42,7 +42,7 @@
 
                 <TextView
                     android:id="@+id/userMessageTextView"
-                    visibilityOfMessage="@{message.isUser ? true : false}"
+                    visibilityOfItem="@{message.isUser ? true : false}"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="@dimen/padding_medium"
@@ -55,7 +55,7 @@
 
         <TextView
             android:id="@+id/aiMessageTextView"
-            visibilityOfMessage="@{!message.isUser ? true : false}"
+            visibilityOfItem="@{!message.isUser ? true : false}"
             android:layout_width="@dimen/layout_zero"
             android:layout_height="wrap_content"
             android:background="@drawable/ai_message_rounded_background"

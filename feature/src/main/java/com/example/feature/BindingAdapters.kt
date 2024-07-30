@@ -1,11 +1,11 @@
-package com.example.chat
+package com.example.feature
 
 import android.graphics.Bitmap
 import android.view.View
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 
-@BindingAdapter("visibilityOfMessage")
+@BindingAdapter("visibilityOfItem")
 fun bindVisibility(view: View, isVisible: Boolean) {
     view.visibility = if (isVisible) View.VISIBLE else View.GONE
 }

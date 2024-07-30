@@ -28,7 +28,8 @@ class MealsTypeAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MealTypeViewHolder {
-        val binding = MealItemLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding =
+            MealItemLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return MealTypeViewHolder(binding)
     }
 
@@ -38,7 +39,8 @@ class MealsTypeAdapter(
 
     override fun getItemCount(): Int = meals.size
 
-    inner class MealTypeViewHolder(private val binding: MealItemLayoutBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class MealTypeViewHolder(private val binding: MealItemLayoutBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(meal: Info) {
             binding.apply {
                 mealTitle.text = meal.title
@@ -57,7 +59,7 @@ class MealsTypeAdapter(
                 }
 
                 val layoutParams = binding.root.layoutParams as ViewGroup.MarginLayoutParams
-                if(isWide) {
+                if (isWide) {
                     layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT
                     layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
                 } else {

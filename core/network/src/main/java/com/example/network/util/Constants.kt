@@ -7,6 +7,8 @@ object Constants {
     const val API_KEY_4 = "9ffdaa45441f4c008f4eff20e5a0a0dc"  // For limiting request issues
     const val BASE_URL = "https://api.spoonacular.com/"
 
+    const val APP_JSON = "application/json"
+
     const val GET_MEALS = "recipes/complexSearch"
     const val GET_MEAL_DETAILS = "recipes/{id}/information"
 

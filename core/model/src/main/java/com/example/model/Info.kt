@@ -8,8 +8,6 @@ data class Info(
     var isFavorite: Boolean = false
 )
 
-
-
 fun Info.toFavoriteMeal(): FavoriteMeal {
     return FavoriteMeal(
         id = id,

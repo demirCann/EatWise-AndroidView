@@ -5,6 +5,7 @@ import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.example.network.retrofit.MealApi
 import com.example.network.source.MealRemoteDataSource
 import com.example.network.source.MealRemoteDataSourceImpl
+import com.example.network.util.Constants.APP_JSON
 import com.example.network.util.Constants.BASE_URL
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
@@ -47,7 +48,7 @@ object NetworkModule {
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(okHttpClient)
-            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+            .addConverterFactory(json.asConverterFactory(APP_JSON.toMediaType()))
             .build()
     }
 
@@ -62,6 +63,4 @@ object NetworkModule {
     fun provideMealRemoteDataSource(mealApi: MealApi): MealRemoteDataSource {
         return MealRemoteDataSourceImpl(mealApi)
     }
-
-
 }
