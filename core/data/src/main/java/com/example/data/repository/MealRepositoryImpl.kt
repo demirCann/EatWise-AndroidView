@@ -1,9 +1,9 @@
 package com.example.data.repository
 
 import com.example.database.model.FavoriteMealEntity
-import com.example.database.model.toEntity
 import com.example.database.source.FavoriteLocalDataSource
 import com.example.model.FavoriteMeal
+import com.example.model.toEntity
 import com.example.network.model.MealDetailResponse
 import com.example.network.model.MealResponse
 import com.example.network.source.MealRemoteDataSource
