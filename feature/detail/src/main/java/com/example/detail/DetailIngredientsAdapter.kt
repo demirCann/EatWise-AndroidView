@@ -2,17 +2,13 @@ package com.example.detail
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.detail.databinding.DetailItemBinding
 
-class DetailIngredientsAdapter : RecyclerView.Adapter<DetailIngredientsAdapter.DetailViewHolder>() {
-
-    private var items: List<String> = emptyList()
-
-    fun submitList(newItems: List<String>) {
-        items = newItems
-        notifyDataSetChanged()
-    }
+class DetailIngredientsAdapter :
+    ListAdapter<String, DetailIngredientsAdapter.DetailViewHolder>(IngredientDiffCallback()) {
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -26,11 +22,8 @@ class DetailIngredientsAdapter : RecyclerView.Adapter<DetailIngredientsAdapter.D
         holder: DetailIngredientsAdapter.DetailViewHolder,
         position: Int
     ) {
-        val itemText = items[position]
-        holder.bind(itemText)
+        holder.bind(getItem(position))
     }
-
-    override fun getItemCount(): Int = items.size
 
     inner class DetailViewHolder(private val binding: DetailItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -38,6 +31,16 @@ class DetailIngredientsAdapter : RecyclerView.Adapter<DetailIngredientsAdapter.D
             binding.apply {
                 itemList.text = itemText
             }
+        }
+    }
+
+    class IngredientDiffCallback : DiffUtil.ItemCallback<String>() {
+        override fun areItemsTheSame(oldItem: String, newItem: String): Boolean {
+            return oldItem == newItem
+        }
+
+        override fun areContentsTheSame(oldItem: String, newItem: String): Boolean {
+            return oldItem == newItem
         }
     }
 }

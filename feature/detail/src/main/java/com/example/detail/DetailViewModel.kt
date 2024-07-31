@@ -1,6 +1,5 @@
 package com.example.detail
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.repository.MealRepository
@@ -14,6 +13,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,25 +22,15 @@ class DetailViewModel @Inject constructor(
     private val repository: MealRepository
 ) : ViewModel() {
 
-    private val _isIngredientsExpanded = MutableStateFlow(false)
-    val isIngredientsExpanded = _isIngredientsExpanded.asStateFlow()
-
-    private val _isInstructionsExpanded = MutableStateFlow(false)
-    val isInstructionsExpanded = _isInstructionsExpanded.asStateFlow()
-
-    private val _selectedMeal = MutableStateFlow(MealDetailState(isLoading = true))
-    val selectedMeal = _selectedMeal.asStateFlow()
+    private val _mealDetailState = MutableStateFlow(MealDetailViewState(isLoading = true))
+    val mealDetailState = _mealDetailState.asStateFlow()
 
     fun updateIngredientsExpanded() {
-        Log.d(
-            "DetailViewModel",
-            "Ingredients expanded state updated: ${_isIngredientsExpanded.value}"
-        )
-        _isIngredientsExpanded.value = !_isIngredientsExpanded.value
+        _mealDetailState.update { it.copy(isIngredientsExpanded = !it.isIngredientsExpanded) }
     }
 
     fun updateInstructionsExpanded() {
-        _isInstructionsExpanded.value = !_isInstructionsExpanded.value
+        _mealDetailState.update { it.copy(isInstructionsExpanded = !it.isInstructionsExpanded) }
     }
 
     fun fetchMealDetail(mealId: Int) {
@@ -52,24 +42,20 @@ class DetailViewModel @Inject constructor(
                         if (detail != null) {
                             detail.isFavorite = repository.isFavorite(mealId)
                         }
-                        _selectedMeal.value = MealDetailState(
-                            isLoading = false,
-                            detail = detail
-                        )
+                        _mealDetailState.update { it.copy(isLoading = false, detail = detail) }
                     }
 
                     is ApiResult.Error -> {
-                        _selectedMeal.value =
-                            MealDetailState(
+                        _mealDetailState.update {
+                            it.copy(
                                 isLoading = false,
                                 errorMessage = apiResult.message ?: ERROR_OCCURRED
                             )
+                        }
                     }
 
                     is ApiResult.Loading -> {
-                        _selectedMeal.value = MealDetailState(
-                            isLoading = true
-                        )
+                        _mealDetailState.update { it.copy(isLoading = true) }
                     }
                 }
             }
@@ -89,8 +75,10 @@ class DetailViewModel @Inject constructor(
     }
 }
 
-data class MealDetailState(
+data class MealDetailViewState(
     val isLoading: Boolean = false,
     val detail: MealDetail? = null,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    var isIngredientsExpanded: Boolean = false,
+    var isInstructionsExpanded: Boolean = false
 )
