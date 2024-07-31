@@ -1,15 +1,11 @@
 package com.example.chat
 
 import android.app.Activity
-import android.content.ContentResolver
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.ImageDecoder
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,6 +18,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chat.databinding.FragmentChatBinding
+import com.example.feature.getBitmapForBoth
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -56,8 +53,8 @@ class ChatFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.messageState.collect { messages ->
-                    chatAdapter.submitList(messages)
-                    Log.d("ChatFragment", "messages: $messages")
+                    val chatMessage = messages.messagesGemini
+                    chatAdapter.submitList(chatMessage)
                 }
             }
         }
@@ -112,15 +109,5 @@ class ChatFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-}
-
-fun getBitmapForBoth(contentResolver: ContentResolver, imageUri: Uri): Bitmap {
-    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-        val source = ImageDecoder.createSource(contentResolver, imageUri)
-        ImageDecoder.decodeBitmap(source)
-    } else {
-        @Suppress("DEPRECATION")
-        MediaStore.Images.Media.getBitmap(contentResolver, imageUri)
     }
 }
