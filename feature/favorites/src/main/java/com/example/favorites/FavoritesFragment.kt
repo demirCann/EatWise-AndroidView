@@ -12,6 +12,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.favorites.databinding.FragmentFavoritesBinding
 import com.example.feature.MealsTypeAdapter
+import com.example.feature.toInfo
 import com.example.feature.utils.LayoutUtil
 import com.example.feature.utils.NavigationUtil
 import dagger.hilt.android.AndroidEntryPoint
@@ -32,7 +33,6 @@ class FavoritesFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment
         _binding = FragmentFavoritesBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -41,6 +41,8 @@ class FavoritesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel.getFavorites()
+        setupRecyclerView()
+        getFavoriteMeals()
 
         LayoutUtil.setLayoutManager(
             this.context,
@@ -48,6 +50,16 @@ class FavoritesFragment : Fragment() {
             resources.configuration.orientation
         )
 
+        NavigationUtil.setupSearchButton(
+            this,
+            binding.topAppBar,
+            R.id.search,
+            FavoritesFragmentDirections.actionFavoritesFragmentToSearchFragment(true)
+        )
+
+    }
+
+    private fun setupRecyclerView() {
         favoriteAdapter = MealsTypeAdapter(
             isWide = true,
             onFavoriteClicked = { favorite ->
@@ -60,42 +72,38 @@ class FavoritesFragment : Fragment() {
             }
         )
         binding.recyclerView.adapter = favoriteAdapter
-
-        NavigationUtil.setupSearchButton(
-            this,
-            binding.topAppBar,
-            R.id.search,
-            FavoritesFragmentDirections.actionFavoritesFragmentToSearchFragment(true)
-        )
-
-        getFavorites()
     }
 
-    private fun getFavorites() {
+    private fun getFavoriteMeals() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.favoritesState.collect { favoriteState ->
                     when {
                         favoriteState.isLoading -> {
-                            // show loading
-                            binding.progressBar.visibility = View.VISIBLE
-                            binding.recyclerView.visibility = View.GONE
-                            binding.errorText.visibility = View.GONE
+                            binding.apply {
+                                progressBar.visibility = View.VISIBLE
+                                recyclerView.visibility = View.GONE
+                                errorText.visibility = View.GONE
+                            }
                         }
 
                         favoriteState.favorites != null -> {
-                            binding.progressBar.visibility = View.GONE
-                            binding.recyclerView.visibility = View.VISIBLE
-                            binding.errorText.visibility = View.GONE
-                            favoriteAdapter.submitFavoriteList(favoriteState.favorites)
+                            binding.apply {
+                                progressBar.visibility = View.GONE
+                                recyclerView.visibility = View.VISIBLE
+                                errorText.visibility = View.GONE
+                            }
+                            val infoList = favoriteState.favorites.map { it.toInfo() }
+                            favoriteAdapter.submitList(infoList)
                         }
 
                         favoriteState.errorMessage != null -> {
-                            // show error message
-                            binding.progressBar.visibility = View.GONE
-                            binding.recyclerView.visibility = View.GONE
-                            binding.errorText.text = favoriteState.errorMessage
-                            binding.errorText.visibility = View.VISIBLE
+                            binding.apply {
+                                progressBar.visibility = View.GONE
+                                recyclerView.visibility = View.GONE
+                                errorText.text = favoriteState.errorMessage
+                                errorText.visibility = View.VISIBLE
+                            }
                         }
                     }
                 }

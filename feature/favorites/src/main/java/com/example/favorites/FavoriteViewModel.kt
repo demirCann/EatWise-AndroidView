@@ -4,11 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.repository.MealRepository
 import com.example.database.model.FavoriteMealEntity
-import com.example.util.DaoResult
+import com.example.database.util.DaoResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,26 +23,28 @@ class FavoriteViewModel @Inject constructor(
 
     fun getFavorites() {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.getAllFavorites().collect {
-                when (it) {
+            repository.getAllFavorites().collect { daoResult ->
+                when (daoResult) {
                     is DaoResult.Success -> {
-                        _favoritesState.value = FavoriteState(
-                            isLoading = false,
-                            favorites = it.data
-                        )
+                        _favoritesState.update {
+                            it.copy(
+                                isLoading = false,
+                                favorites = daoResult.data
+                            )
+                        }
                     }
 
                     is DaoResult.Error -> {
-                        _favoritesState.value = FavoriteState(
-                            isLoading = false,
-                            errorMessage = it.message
-                        )
+                        _favoritesState.update {
+                            it.copy(
+                                isLoading = false,
+                                errorMessage = daoResult.message
+                            )
+                        }
                     }
 
                     is DaoResult.Loading -> {
-                        _favoritesState.value = FavoriteState(
-                            isLoading = true
-                        )
+                        _favoritesState.update { it.copy(isLoading = true) }
                     }
                 }
             }
