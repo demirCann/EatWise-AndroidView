@@ -2,9 +2,7 @@ package com.example.network.retrofit
 
 import com.example.network.model.MealDetailResponse
 import com.example.network.model.MealResponse
-import com.example.network.util.Constants.API_KEY_2
 import com.example.network.util.Constants.API_KEY_3
-import com.example.network.util.Constants.API_KEY_4
 import com.example.network.util.Constants.DEFAULT_MEAL_NUMBER
 import com.example.network.util.Constants.GET_MEALS
 import com.example.network.util.Constants.GET_MEAL_DETAILS
@@ -19,27 +17,27 @@ interface MealApi {
     suspend fun getMealsForTypes(
         @Query("type") type: String = MAIN_COURSE,
         @Query("number") number: Int = DEFAULT_MEAL_NUMBER,
-        @Query("apiKey") apiKey: String = API_KEY_4
+        @Query("apiKey") apiKey: String = API_KEY_3
     ): Response<MealResponse>
 
     @GET(GET_MEALS)
     suspend fun getMealsForDiet(
         @Query("diet") type: String = MAIN_COURSE,
         @Query("number") number: Int = DEFAULT_MEAL_NUMBER,
-        @Query("apiKey") apiKey: String = API_KEY_4
+        @Query("apiKey") apiKey: String = API_KEY_3
     ): Response<MealResponse>
 
     @GET(GET_MEAL_DETAILS)
     suspend fun getMealDetails(
         @Path("id") id: Int,
-        @Query("apiKey") apiKey: String = API_KEY_4
+        @Query("apiKey") apiKey: String = API_KEY_3
     ): Response<MealDetailResponse>
 
     @GET(GET_MEALS)
     suspend fun searchRecipes(
         @Query("query") query: String,
         @Query("number") number: Int = DEFAULT_MEAL_NUMBER,
-        @Query("apiKey") apiKey: String = API_KEY_4
+        @Query("apiKey") apiKey: String = API_KEY_3
     ): Response<MealResponse>
 
 }

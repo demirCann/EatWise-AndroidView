@@ -74,9 +74,6 @@ dependencies {
 
     // Coil
     implementation(libs.coil)
-
-    // Jsoup
-    implementation(libs.jsoup)
 }
 
 kapt {

@@ -4,16 +4,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.repository.MealRepository
 import com.example.database.model.FavoriteMealEntity
+import com.example.database.util.DaoResult
+import com.example.feature.utils.Constants.ERROR_OCCURRED
 import com.example.model.Info
 import com.example.model.MealList
 import com.example.model.toFavoriteMeal
 import com.example.network.model.toMealList
 import com.example.util.ApiResult
-import com.example.util.DaoResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,10 +24,7 @@ class SearchViewModel @Inject constructor(
     private val repository: MealRepository
 ) : ViewModel() {
 
-    private val _favoriteSearchedMeals = MutableStateFlow(FavoriteSearchState(isLoading = true))
-    val favoriteSearchedMeals = _favoriteSearchedMeals.asStateFlow()
-
-    private val _searchedMeals = MutableStateFlow(NetworkSearchState(isLoading = true))
+    private val _searchedMeals = MutableStateFlow(SearchState(isLoading = true))
     val searchedMeals = _searchedMeals.asStateFlow()
 
     fun favoriteSearch(query: String) {
@@ -34,23 +33,25 @@ class SearchViewModel @Inject constructor(
                 when (daoResult) {
                     is DaoResult.Success -> {
                         val searchedMeals = daoResult.data!!
-                        _favoriteSearchedMeals.value = FavoriteSearchState(
-                            isLoading = false,
-                            searchedMeals = searchedMeals
-                        )
+                        _searchedMeals.update {
+                            it.copy(
+                                isLoading = false,
+                                searchedFavoriteMeals = searchedMeals
+                            )
+                        }
                     }
 
                     is DaoResult.Error -> {
-                        _favoriteSearchedMeals.value = FavoriteSearchState(
-                            isLoading = false,
-                            errorMessage = daoResult.message
-                        )
+                        _searchedMeals.update {
+                            it.copy(
+                                isLoading = false,
+                                errorMessage = daoResult.message
+                            )
+                        }
                     }
 
                     is DaoResult.Loading -> {
-                        _favoriteSearchedMeals.value = FavoriteSearchState(
-                            isLoading = true
-                        )
+                        _searchedMeals.update { it.copy(isLoading = true) }
                     }
                 }
             }
@@ -63,23 +64,25 @@ class SearchViewModel @Inject constructor(
                 when (apiResult) {
                     is ApiResult.Success -> {
                         val searchedMeals = apiResult.data!!.toMealList()
-                        _searchedMeals.value = NetworkSearchState(
-                            isLoading = false,
-                            searchedMeals = searchedMeals
-                        )
+                        _searchedMeals.update {
+                            it.copy(
+                                isLoading = false,
+                                searchedMeals = searchedMeals
+                            )
+                        }
                     }
 
                     is ApiResult.Error -> {
-                        _searchedMeals.value = NetworkSearchState(
-                            isLoading = false,
-                            errorMessage = apiResult.message
-                        )
+                        _searchedMeals.update {
+                            it.copy(
+                                isLoading = false,
+                                errorMessage = apiResult.message ?: ERROR_OCCURRED
+                            )
+                        }
                     }
 
                     is ApiResult.Loading -> {
-                        _searchedMeals.value = NetworkSearchState(
-                            isLoading = true
-                        )
+                        _searchedMeals.update { it.copy(isLoading = true) }
                     }
                 }
             }
@@ -99,14 +102,9 @@ class SearchViewModel @Inject constructor(
     }
 }
 
-data class NetworkSearchState(
+data class SearchState(
     val isLoading: Boolean = false,
     val searchedMeals: MealList? = null,
-    val errorMessage: String? = null
-)
-
-data class FavoriteSearchState(
-    val isLoading: Boolean = false,
-    val searchedMeals: List<FavoriteMealEntity>? = null,
+    val searchedFavoriteMeals: List<FavoriteMealEntity>? = null,
     val errorMessage: String? = null
 )

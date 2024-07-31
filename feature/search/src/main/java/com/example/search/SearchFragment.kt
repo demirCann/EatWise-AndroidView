@@ -1,10 +1,11 @@
 package com.example.search
 
+import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -12,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.feature.MealsTypeAdapter
+import com.example.feature.toInfo
 import com.example.feature.utils.LayoutUtil
 import com.example.search.databinding.FragmentSearchBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -26,7 +28,6 @@ class SearchFragment : Fragment() {
     private val viewModel: SearchViewModel by viewModels()
     private lateinit var searchAdapter: MealsTypeAdapter
     private var isFavoriteSearch = false
-
     private val args: SearchFragmentArgs by navArgs()
 
     override fun onCreateView(
@@ -57,13 +58,7 @@ class SearchFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.searchedMeals.collect {
-                handleNetworkSearchState(it)
-            }
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.favoriteSearchedMeals.collect {
-                handleFavoriteSearchState(it)
+                handleSearchState(it)
             }
         }
     }
@@ -87,90 +82,101 @@ class SearchFragment : Fragment() {
     }
 
     private fun setupSearchToolBar() {
-        binding.searchView.isIconified = false
-        binding.searchView.clearFocus()
-        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                if (!query.isNullOrEmpty()) {
-                    binding.emptyTextView.visibility = View.GONE
+        binding.apply {
+            searchView.isIconified = false
+            searchView.clearFocus()
+            searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    if (!query.isNullOrEmpty()) {
+                        binding.emptyTextView.visibility = View.GONE
 
-                    if (isFavoriteSearch) {
-                        viewModel.favoriteSearch(query)
-                    } else viewModel.networkSearch(query)
-                }
-                return true
-            }
+                        hideKeyboard()
 
-            override fun onQueryTextChange(newText: String?): Boolean {
-                if (newText.isNullOrEmpty()) {
-                    searchAdapter.submitList(emptyList())
-                    binding.emptyTextView.visibility = View.VISIBLE
+                        if (isFavoriteSearch) {
+                            viewModel.favoriteSearch(query)
+                        } else viewModel.networkSearch(query)
+                    }
+                    return true
                 }
-                return true
-            }
-        })
-        binding.searchView.setOnCloseListener {
-            if (binding.searchView.query.isEmpty()) {
-                findNavController().navigateUp()
-            } else {
-                binding.searchView.setQuery("", false)
-                binding.searchView.clearFocus()
-                searchAdapter.submitList(emptyList())
-                true
+
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    if (newText.isNullOrEmpty()) {
+                        searchAdapter.submitList(emptyList())
+                        binding.emptyTextView.visibility = View.VISIBLE
+                    }
+                    return true
+                }
+            })
+            searchView.setOnCloseListener {
+                if (binding.searchView.query.isEmpty()) {
+                    findNavController().navigateUp()
+                } else {
+                    binding.apply {
+                        searchView.setQuery("", false)
+                        searchView.clearFocus()
+                        searchAdapter.submitList(emptyList())
+                    }
+                    true
+                }
             }
         }
     }
 
-    private fun handleNetworkSearchState(state: NetworkSearchState) {
+    private fun handleSearchState(state: SearchState) {
         when {
             state.isLoading -> {
-                binding.recyclerView.visibility = View.GONE
-                binding.emptyTextView.visibility = View.GONE
+                binding.apply {
+                    recyclerView.visibility = View.GONE
+                    emptyTextView.visibility = View.GONE
+                }
             }
 
             state.errorMessage != null -> {
-                binding.emptyTextView.text = state.errorMessage
-                binding.emptyTextView.visibility = View.VISIBLE
-                binding.recyclerView.visibility = View.GONE
+                binding.apply {
+                    emptyTextView.text = state.errorMessage
+                    recyclerView.visibility = View.GONE
+                    emptyTextView.visibility = View.VISIBLE
+                }
+            }
+
+            state.searchedFavoriteMeals != null -> {
+                if (state.searchedFavoriteMeals.isEmpty()) {
+                    binding.apply {
+                        emptyTextView.visibility = View.VISIBLE
+                        recyclerView.visibility = View.GONE
+                    }
+                } else {
+                    binding.apply {
+                        emptyTextView.visibility = View.GONE
+                        recyclerView.visibility = View.VISIBLE
+                        val favoriteSearched = state.searchedFavoriteMeals.map {
+                            it.toInfo()
+                        }
+                        searchAdapter.submitList(favoriteSearched)
+                    }
+                }
             }
 
             state.searchedMeals != null -> {
                 if (state.searchedMeals.results.isEmpty()) {
-                    binding.emptyTextView.visibility = View.VISIBLE
-                    binding.recyclerView.visibility = View.GONE
+                    binding.apply {
+                        emptyTextView.visibility = View.VISIBLE
+                        recyclerView.visibility = View.GONE
+                    }
                 } else {
-                    binding.emptyTextView.visibility = View.GONE
-                    binding.recyclerView.visibility = View.VISIBLE
-                    searchAdapter.submitList(state.searchedMeals.results)
+                    binding.apply {
+                        emptyTextView.visibility = View.GONE
+                        recyclerView.visibility = View.VISIBLE
+                        searchAdapter.submitList(state.searchedMeals.results)
+                    }
                 }
             }
         }
     }
 
-    private fun handleFavoriteSearchState(state: FavoriteSearchState) {
-        Log.d("SearchFragment", "handleFavoriteSearchState: $state")
-        when {
-            state.isLoading -> {
-                binding.recyclerView.visibility = View.GONE
-            }
-
-            state.errorMessage != null -> {
-                binding.emptyTextView.text = state.errorMessage
-                binding.emptyTextView.visibility = View.VISIBLE
-                binding.recyclerView.visibility = View.GONE
-            }
-
-            state.searchedMeals != null -> {
-                if (state.searchedMeals.isEmpty()) {
-                    binding.emptyTextView.visibility = View.VISIBLE
-                    binding.recyclerView.visibility = View.GONE
-                } else {
-                    binding.emptyTextView.visibility = View.GONE
-                    binding.recyclerView.visibility = View.VISIBLE
-                    searchAdapter.submitFavoriteList(state.searchedMeals)
-                }
-            }
-        }
+    private fun hideKeyboard() {
+        val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view?.windowToken, 0)
     }
 
     override fun onDestroyView() {

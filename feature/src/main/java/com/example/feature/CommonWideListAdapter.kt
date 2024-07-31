@@ -1,8 +1,9 @@
 package com.example.feature
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.database.model.FavoriteMealEntity
@@ -13,19 +14,7 @@ class MealsTypeAdapter(
     private val isWide: Boolean,
     private val onClickedItem: (Int) -> Unit,
     private val onFavoriteClicked: (Info) -> Unit
-) : RecyclerView.Adapter<MealsTypeAdapter.MealTypeViewHolder>() {
-
-    private var meals: List<Info> = emptyList()
-
-    fun submitList(newMeals: List<Info>) {
-        meals = newMeals
-        notifyDataSetChanged()
-    }
-
-    fun submitFavoriteList(newMeals: List<FavoriteMealEntity>) {
-        meals = newMeals.map { it.toInfo() }
-        notifyDataSetChanged()
-    }
+) : ListAdapter<Info, MealsTypeAdapter.MealTypeViewHolder>(MealItemDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MealTypeViewHolder {
         val binding =
@@ -34,10 +23,8 @@ class MealsTypeAdapter(
     }
 
     override fun onBindViewHolder(holder: MealTypeViewHolder, position: Int) {
-        holder.bind(meals[position])
+        holder.bind(getItem(position))
     }
-
-    override fun getItemCount(): Int = meals.size
 
     inner class MealTypeViewHolder(private val binding: MealItemLayoutBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -69,6 +56,16 @@ class MealsTypeAdapter(
             }
         }
     }
+
+    class MealItemDiffCallback : DiffUtil.ItemCallback<Info>() {
+        override fun areItemsTheSame(oldItem: Info, newItem: Info): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(oldItem: Info, newItem: Info): Boolean {
+            return oldItem == newItem
+        }
+    }
 }
 
 fun FavoriteMealEntity.toInfo() = Info(
@@ -78,5 +75,3 @@ fun FavoriteMealEntity.toInfo() = Info(
     title = title,
     isFavorite = true
 )
-
-fun Int.dpToPx(context: Context): Int = (this * context.resources.displayMetrics.density).toInt()
