@@ -3,7 +3,7 @@ package com.example.database
 import com.example.database.dao.FavoriteDao
 import com.example.database.model.FavoriteMealEntity
 import com.example.database.source.FavoriteLocalDataSourceImpl
-import com.example.util.DaoResult
+import com.example.database.util.DaoResult
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOf

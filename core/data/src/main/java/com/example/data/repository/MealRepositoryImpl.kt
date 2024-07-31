@@ -8,7 +8,7 @@ import com.example.network.model.MealDetailResponse
 import com.example.network.model.MealResponse
 import com.example.network.source.MealRemoteDataSource
 import com.example.util.ApiResult
-import com.example.util.DaoResult
+import com.example.database.util.DaoResult
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

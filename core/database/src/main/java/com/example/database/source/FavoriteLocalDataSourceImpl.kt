@@ -2,7 +2,7 @@ package com.example.database.source
 
 import com.example.database.dao.FavoriteDao
 import com.example.database.model.FavoriteMealEntity
-import com.example.util.DaoResult
+import com.example.database.util.DaoResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull

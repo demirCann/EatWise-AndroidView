@@ -1,7 +1,7 @@
 package com.example.database.source
 
 import com.example.database.model.FavoriteMealEntity
-import com.example.util.DaoResult
+import com.example.database.util.DaoResult
 import kotlinx.coroutines.flow.Flow
 
 interface FavoriteLocalDataSource {
