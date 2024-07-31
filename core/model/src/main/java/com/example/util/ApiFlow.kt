@@ -1,5 +1,9 @@
 package com.example.util
 
+import com.example.util.Constants.ERROR_OCCURRED
+import com.example.util.Constants.HTTP_ERROR
+import com.example.util.Constants.REQUEST_LIMIT_REACHED
+import com.example.util.Constants.RESPONSE_NULL
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -25,26 +29,26 @@ fun <T> apiFlow(
                 if (body != null) {
                     emit(ApiResult.Success(body))
                 } else {
-                    emit(ApiResult.Error("An error occurred"))
+                    emit(ApiResult.Error(ERROR_OCCURRED))
                 }
             } else {
                 val errorBody = c.errorBody()?.string()
                 val errorResponse = gson.fromJson(errorBody, ApiErrorResponse::class.java)
                 emit(ApiResult.Error(errorResponse.error))
             }
-        } ?: emit(ApiResult.Error("Response is null"))
+        } ?: emit(ApiResult.Error(RESPONSE_NULL))
     } catch (e: HttpException) {
         val errorBody = e.response()?.errorBody()?.string()
         val errorMessage = when (e.code()) {
-            429 -> "API request limit reached. Please try again later."
-            else -> errorBody ?: "An unknown HTTP error occurred"
+            429 -> REQUEST_LIMIT_REACHED
+            else -> errorBody ?: HTTP_ERROR
         }
         emit(ApiResult.Error(errorMessage))
     } catch (e: Exception) {
-        emit(ApiResult.Error(e.message ?: "An error occurred"))
+        emit(ApiResult.Error(e.message ?: ERROR_OCCURRED))
 
     } catch (e: IOException) {
-        emit(ApiResult.Error(e.message ?: "An error occurred"))
+        emit(ApiResult.Error(e.message ?: ERROR_OCCURRED))
     }
 }.flowOn(Dispatchers.IO)
 
