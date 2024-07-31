@@ -12,6 +12,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -33,26 +34,27 @@ class MealTypeListViewModel @Inject constructor(
     private fun fetchMealsForTypes(mealType: String, number: Int = 10) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.getMealsForTypes(mealType, number).collect { apiResult ->
-                _mealState.value = when (apiResult) {
+                when (apiResult) {
                     is ApiResult.Success -> {
                         val mealList = apiResult.data?.toMealList()
                         mealList?.results?.forEach { info ->
                             info.isFavorite = repository.isFavorite(info.id)
                         }
-                        MealState(
-                            isLoading = false,
-                            mealItems = mealList
-                        )
+                        _mealState.update { it.copy(isLoading = false, mealItems = mealList) }
                     }
 
-                    is ApiResult.Error -> MealState(
-                        isLoading = false,
-                        errorMessage = apiResult.message ?: ERROR_OCCURRED
-                    )
+                    is ApiResult.Error -> {
+                        _mealState.update {
+                            it.copy(
+                                isLoading = false,
+                                errorMessage = apiResult.message ?: ERROR_OCCURRED
+                            )
+                        }
+                    }
 
-                    is ApiResult.Loading -> MealState(
-                        isLoading = true
-                    )
+                    is ApiResult.Loading -> {
+                        _mealState.update { it.copy(isLoading = true) }
+                    }
                 }
             }
         }

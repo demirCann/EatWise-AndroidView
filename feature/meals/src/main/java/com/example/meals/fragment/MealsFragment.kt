@@ -25,7 +25,6 @@ import kotlinx.coroutines.launch
 class MealsFragment : Fragment() {
 
     private var _binding: FragmentMealsBinding? = null
-
     private val binding get() = _binding!!
 
     private val viewModel: MealsViewModel by viewModels()
@@ -43,8 +42,6 @@ class MealsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupRecyclerView()
-        setupObservers()
-
         NavigationUtil.setupSearchButton(
             this,
             binding.topAppBar,
@@ -59,6 +56,7 @@ class MealsFragment : Fragment() {
                 }
             }
         }
+        setupObservers()
     }
 
     private fun setupRecyclerView() {
@@ -95,42 +93,42 @@ class MealsFragment : Fragment() {
 
     private fun setupObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
-
-            val allItems = mutableListOf<MealItem>()
-
-            val carouselItems = MealItem.Carousel(viewModel.carouselItems)
-            allItems.add(carouselItems)
-
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.mealStates.forEach { (mealType, stateFlow) ->
-                    launch {
-                        stateFlow.collect { mealState ->
-                            when {
-                                mealState.isLoading -> {
-                                    binding.progressBar.visibility = View.VISIBLE
-                                    binding.mealsRecyclerView.visibility = View.GONE
-                                    binding.errorText.visibility = View.GONE
-                                }
-
-                                mealState.mealItems != null -> {
-                                    binding.progressBar.visibility = View.GONE
-                                    binding.mealsRecyclerView.visibility = View.VISIBLE
-                                    binding.errorText.visibility = View.GONE
-                                    val mealSection =
-                                        MealItem.MealSection(mealType, mealState.mealItems.results)
-                                    allItems.removeAll { it is MealItem.MealSection && it.type == mealType }
-                                    allItems.add(mealSection)
-                                    mealsAdapter.submitList(allItems.toList())
-                                }
-
-                                mealState.errorMessage != null -> {
-                                    binding.progressBar.visibility = View.GONE
-                                    binding.mealsRecyclerView.visibility = View.GONE
-                                    binding.errorText.text = mealState.errorMessage
-                                    binding.errorText.visibility = View.VISIBLE
-                                }
+                viewModel.mealState.collect { mealState ->
+                    when {
+                        mealState.isLoading -> {
+                            binding.apply {
+                                progressBar.visibility = View.VISIBLE
+                                mealsRecyclerView.visibility = View.GONE
+                                errorText.visibility = View.GONE
                             }
-                            mealsAdapter.submitList(allItems.toList())
+                        }
+
+                        mealState.mealTypeItems.isNotEmpty() -> {
+                            binding.apply {
+                                progressBar.visibility = View.GONE
+                                mealsRecyclerView.visibility = View.VISIBLE
+                                errorText.visibility = View.GONE
+                            }
+
+                            val allItems = mutableListOf<MealItem>()
+                            val carouselItems = MealItem.Carousel(viewModel.carouselItems)
+                            allItems.add(carouselItems)
+
+                            mealState.mealTypeItems.forEach { (mealType, mealList) ->
+                                val mealSection = MealItem.MealSection(mealType, mealList.results)
+                                allItems.add(mealSection)
+                            }
+                            mealsAdapter.submitList(allItems)
+                        }
+
+                        mealState.errorMessage != null -> {
+                            binding.apply {
+                                progressBar.visibility = View.GONE
+                                mealsRecyclerView.visibility = View.GONE
+                                errorText.text = mealState.errorMessage
+                                errorText.visibility = View.VISIBLE
+                            }
                         }
                     }
                 }

@@ -2,7 +2,9 @@ package com.example.meals.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.meals.databinding.CarouselLayoutBinding
 import com.example.meals.databinding.MealSectionLayoutBinding
@@ -15,17 +17,10 @@ class MealAdapter(
     private val onClickedMealItem: (Int) -> Unit,
     private val onFavoriteClicked: (Info) -> Unit,
     private val onClickedSeeAll: (String) -> Unit
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
-    private var items: MutableList<MealItem> = mutableListOf()
-
-    fun submitList(newItems: List<MealItem>) {
-        items = newItems.toMutableList()
-        notifyDataSetChanged()
-    }
+) : ListAdapter<MealItem, RecyclerView.ViewHolder>(MealItemDiffCallback()) {
 
     override fun getItemViewType(position: Int): Int {
-        return when (items[position]) {
+        return when (getItem(position)) {
             is MealItem.Carousel -> VIEW_TYPE_CAROUSEL
             is MealItem.MealSection -> VIEW_TYPE_MEAL_SECTION
         }
@@ -54,14 +49,12 @@ class MealAdapter(
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val item = items[position]
+        val item = getItem(position)
         when (holder) {
             is CarouselViewHolder -> holder.bind(item as MealItem.Carousel)
             is MealSectionViewHolder -> holder.bind(item as MealItem.MealSection)
         }
     }
-
-    override fun getItemCount(): Int = items.size
 
     companion object {
         private const val VIEW_TYPE_CAROUSEL = 0
@@ -70,8 +63,8 @@ class MealAdapter(
 
     inner class CarouselViewHolder(private val binding: CarouselLayoutBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: MealItem.Carousel) {
-            val carouselAdapter = CarouselAdapter(item.items) {
+        fun bind(carousel: MealItem.Carousel) {
+            val carouselAdapter = CarouselAdapter(carousel.items) {
                 onClickedCarouselItem(it)
             }
             binding.carouselRecyclerView.apply {
@@ -84,7 +77,6 @@ class MealAdapter(
     inner class MealSectionViewHolder(private val binding: MealSectionLayoutBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: MealItem.MealSection) {
-            // Meal section binding logic here
             binding.mealTypeTitle.text = item.type.type.replaceFirst(
                 item.type.type[0],
                 item.type.type[0].uppercaseChar()
@@ -100,6 +92,16 @@ class MealAdapter(
             binding.seeAllText.setOnClickListener {
                 onClickedSeeAll(item.type.type)
             }
+        }
+    }
+
+    class MealItemDiffCallback : DiffUtil.ItemCallback<MealItem>() {
+        override fun areItemsTheSame(oldItem: MealItem, newItem: MealItem): Boolean {
+            return oldItem == newItem
+        }
+
+        override fun areContentsTheSame(oldItem: MealItem, newItem: MealItem): Boolean {
+            return oldItem == newItem
         }
     }
 }

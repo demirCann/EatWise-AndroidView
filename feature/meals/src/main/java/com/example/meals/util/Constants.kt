@@ -9,4 +9,6 @@ object Constants {
     const val GLUTEN_LOW = "gluten free"
     const val KETOGENIC_CAP = "Ketogenic"
     const val KETOGENIC_LOW = "ketogenic"
+
+    const val MEAL_NUMBER_TO_FETCH = 10
 }
